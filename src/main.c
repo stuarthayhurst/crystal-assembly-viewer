@@ -2,10 +2,16 @@
 
 #include "panes.h"
 
+static GtkWidget* window;
 static GtkWidget* paned_frame;
 static GtkWidget* add_pane_button;
 static GtkWidget* remove_pane_button;
+static GtkWidget* file_label;
+static GtkWidget* recompile_button;
+
 static int num_panes;
+static bool compiling = false;
+static GFile* opened_file = NULL;
 
 static GtkWidget* create_pane_content() {
   GtkWidget* label = gtk_label_new("Hi there");
@@ -17,6 +23,50 @@ static GtkWidget* create_pane_content() {
   gtk_widget_set_vexpand(label, TRUE);
 
   return label;
+}
+
+static void enable_compile() {
+  compiling = false;
+  gtk_widget_set_sensitive(recompile_button, true);
+}
+
+static void disable_compile() {
+  compiling = true;
+  gtk_widget_set_sensitive(recompile_button, false);
+}
+
+static void compile_done() {
+  enable_compile();
+}
+
+static void compile_start() {
+  //Guard against file changes while compiling, not designed to prevent races
+  if (compiling) {
+    return;
+  }
+
+  //Disable recompilation button until it's done
+  disable_compile();
+
+  //Load the file content
+  char* data;
+  gsize size;
+  if (!opened_file || !g_file_load_contents(opened_file, NULL, &data, &size, NULL, NULL)) {
+    enable_compile();
+    return;
+  }
+
+//TODO: Put the data somewhere
+//TODO: Queue up the compile jobs - GLib has a thread pool?
+//TODO: Apply the results of the compile
+//TODO: Free the input data
+//TODO: Handle exiting while jobs are running
+//TODO: Add a spinner while jobs are running
+
+  g_message(data);
+  g_free(data);
+
+  compile_done();
 }
 
 static void set_pane_button_sensitivity() {
@@ -55,6 +105,45 @@ static void remove_button_clicked_callback() {
   set_pane_button_sensitivity();
 }
 
+//Free the open file, if one is open
+static void free_opened_file() {
+  if (opened_file) {
+    g_object_unref(opened_file);
+    opened_file = NULL;
+  }
+}
+
+static void file_opened(GObject* source, GAsyncResult* result, void*) {
+  GFile* selected_file = gtk_file_dialog_open_finish(GTK_FILE_DIALOG(source), result, NULL);
+  if (!selected_file) {
+    return;
+  }
+
+  //Free any existing file and track the new one
+  free_opened_file();
+  opened_file = selected_file;
+
+  //Set the file label to the file name
+  char* file_path = g_file_get_basename(opened_file);
+  gtk_label_set_text(GTK_LABEL(file_label), file_path);
+  g_free(file_path);
+
+  //Initial compile
+  compile_start();
+}
+
+static void file_button_clicked_callback() {
+  //Open the file picker, hand off to file_opened when chosen
+  GtkFileDialog* file_dialog = gtk_file_dialog_new();
+  gtk_file_dialog_open(file_dialog, GTK_WINDOW(window), NULL, file_opened, NULL);
+
+  g_object_unref(file_dialog);
+}
+
+static void recompile_button_clicked_callback() {
+  compile_start();
+}
+
 static void setup_content(GtkWidget* window) {
   //Create a vbox for the window content
   GtkWidget* vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
@@ -65,9 +154,36 @@ static void setup_content(GtkWidget* window) {
   gtk_window_set_child(GTK_WINDOW(window), vbox);
 
   //Create an hbox for the buttons
-  GtkWidget* button_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
-  gtk_widget_set_hexpand(button_box, false);
-  gtk_box_append(GTK_BOX(vbox), button_box);
+  GtkWidget* button_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_set_hexpand(button_box, true);
+  gtk_widget_set_halign(button_box, GTK_ALIGN_END);
+  gtk_box_set_spacing(GTK_BOX(button_box), 8);
+
+  //Create an hbox for the file elements
+  GtkWidget* file_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_set_hexpand(file_box, true);
+  gtk_widget_set_halign(file_box, GTK_ALIGN_START);
+  gtk_box_set_spacing(GTK_BOX(file_box), 8);
+
+  //Create a button to open a file
+  GtkWidget* file_button = gtk_button_new_from_icon_name("document-open-symbolic");
+  g_signal_connect(file_button, "clicked", G_CALLBACK(file_button_clicked_callback), NULL);
+  gtk_box_append(GTK_BOX(file_box), file_button);
+
+  //Create a label for the open file
+  file_label = gtk_label_new("No file selected");
+  gtk_box_append(GTK_BOX(file_box), file_label);
+
+  //Create a button to recompile
+  recompile_button = gtk_button_new_from_icon_name("view-refresh-symbolic");
+  g_signal_connect(recompile_button, "clicked", G_CALLBACK(recompile_button_clicked_callback), NULL);
+  gtk_box_append(GTK_BOX(file_box), recompile_button);
+
+  //Create an hbox for the panel boxes
+  GtkWidget* panel_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
+  gtk_box_append(GTK_BOX(vbox), panel_box);
+  gtk_box_append(GTK_BOX(panel_box), file_box);
+  gtk_box_append(GTK_BOX(panel_box), button_box);
 
   //Create the add pane button
   add_pane_button = gtk_button_new_from_icon_name("list-add-symbolic");
@@ -95,7 +211,7 @@ static void setup_content(GtkWidget* window) {
 }
 
 static void activate_callback(GtkApplication* app) {
-  GtkWidget* window = gtk_application_window_new(app);
+  window = gtk_application_window_new(app);
 
   gtk_window_set_title(GTK_WINDOW(window), "Crystal");
   gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
@@ -113,6 +229,7 @@ int main(int argc, char* argv[]) {
   g_signal_connect(app, "activate", G_CALLBACK(activate_callback), NULL);
   int result = g_application_run(G_APPLICATION(app), argc, argv);
 
+  free_opened_file();
   g_object_unref(app);
   return result;
 }
