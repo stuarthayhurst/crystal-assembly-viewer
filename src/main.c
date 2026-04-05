@@ -19,44 +19,18 @@ static int num_panes = 0;
 static bool compiling = false;
 static GFile* opened_file = NULL;
 
-static GtkWidget** compiler_widgets = NULL;
+static GtkWidget* compiler_widgets[MAX_NUM_PANES];
 
 static GtkWidget* add_compiler_widget() {
-  GtkWidget* new_widget = create_compiler_widget();
-
-  //Create a new array for the widgets
   num_panes++;
-  GtkWidget** new_widgets = malloc(sizeof(GtkWidget*) * num_panes);
-  if (num_panes != 1) {
-    memcpy(new_widgets, compiler_widgets, sizeof(GtkWidget*) * (num_panes - 1));
-  }
-  new_widgets[num_panes - 1] = new_widget;
 
-  //Replace the widget array
-  if (compiler_widgets != NULL) {
-    free(compiler_widgets);
-  }
-  compiler_widgets = new_widgets;
-
-  return new_widget;
+  //Create and return a new widgets
+  compiler_widgets[num_panes - 1] = create_compiler_widget();
+  return compiler_widgets[num_panes - 1];
 }
 
-static void remove_compiler_widget(GtkWidget* old_widget) {
-  //Copy widgets to be kept to a new array
+static void remove_last_compiler_widget() {
   num_panes--;
-  GtkWidget** new_widgets = malloc(sizeof(GtkWidget*) * num_panes);
-  int new_index = 0;
-  for (int i = 0; i < num_panes + 1; i++) {
-    if (compiler_widgets[i] != old_widget) {
-      new_widgets[new_index++] = compiler_widgets[i];
-    }
-  }
-
-  //Replace the widget array
-  if (compiler_widgets != NULL) {
-    free(compiler_widgets);
-  }
-  compiler_widgets = new_widgets;
 }
 
 static void set_compiling(bool new_compiling) {
@@ -129,7 +103,7 @@ static void add_button_clicked_callback() {
 
 static void remove_button_clicked_callback() {
   //Remove the last pane and content
-  remove_compiler_widget(compiler_widgets[num_panes - 1]);
+  remove_last_compiler_widget();
   remove_last_pane(paned_frame);
 
   //Resize and update buttons
@@ -259,10 +233,6 @@ int main(int argc, char* argv[]) {
   app = adw_application_new("io.github.stuarthayhurst.Crystal", G_APPLICATION_DEFAULT_FLAGS);
   g_signal_connect(app, "activate", G_CALLBACK(activate_callback), NULL);
   int result = g_application_run(G_APPLICATION(app), argc, argv);
-
-  if (compiler_widgets != NULL) {
-    free(compiler_widgets);
-  }
 
   free_opened_file();
   g_object_unref(app);
