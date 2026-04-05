@@ -13,6 +13,7 @@ CFLAGS += -Wall -Wextra -Werror -Wpedantic -flto=auto -std=c23
 #Debug arguments
 ifeq ($(DEBUG),true)
   CFLAGS += -g -fno-omit-frame-pointer
+  CFLAGS += -fsanitize=address,undefined
 endif
 
 #Dependency arguments
