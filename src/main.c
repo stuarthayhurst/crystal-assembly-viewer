@@ -1,5 +1,9 @@
+#include <stdlib.h>
+#include <string.h>
+
 #include <adwaita.h>
 
+#include "compiler_widget.h"
 #include "panes.h"
 
 static GtkWidget* window;
@@ -9,34 +13,61 @@ static GtkWidget* remove_pane_button;
 static GtkWidget* file_label;
 static GtkWidget* recompile_button;
 
-static int num_panes;
+static int num_panes = 0;
 static bool compiling = false;
 static GFile* opened_file = NULL;
 
-static GtkWidget* create_pane_content() {
-  GtkWidget* label = gtk_label_new("Hi there");
-  gtk_widget_set_margin_start(label, 4);
-  gtk_widget_set_margin_end(label, 4);
-  gtk_widget_set_margin_top(label, 4);
-  gtk_widget_set_margin_bottom(label, 4);
-  gtk_widget_set_hexpand(label, TRUE);
-  gtk_widget_set_vexpand(label, TRUE);
+static GtkWidget** compiler_widgets = NULL;
 
-  return label;
+static GtkWidget* add_compiler_widget() {
+  GtkWidget* new_widget = create_compiler_widget();
+
+  //Create a new array for the widgets
+  num_panes++;
+  GtkWidget** new_widgets = malloc(sizeof(GtkWidget*) * num_panes);
+  if (num_panes != 1) {
+    memcpy(new_widgets, compiler_widgets, sizeof(GtkWidget*) * (num_panes - 1));
+  }
+  new_widgets[num_panes - 1] = new_widget;
+
+  //Replace the widget array
+  if (compiler_widgets != NULL) {
+    free(compiler_widgets);
+  }
+  compiler_widgets = new_widgets;
+
+  return new_widget;
 }
 
-static void enable_compile() {
-  compiling = false;
-  gtk_widget_set_sensitive(recompile_button, true);
+static void remove_compiler_widget(GtkWidget* old_widget) {
+  //Copy widgets to be kept to a new array
+  num_panes--;
+  GtkWidget** new_widgets = malloc(sizeof(GtkWidget*) * num_panes);
+  int new_index = 0;
+  for (int i = 0; i < num_panes + 1; i++) {
+    if (compiler_widgets[i] != old_widget) {
+      new_widgets[new_index++] = compiler_widgets[i];
+    }
+  }
+
+  //Replace the widget array
+  if (compiler_widgets != NULL) {
+    free(compiler_widgets);
+  }
+  compiler_widgets = new_widgets;
 }
 
-static void disable_compile() {
-  compiling = true;
-  gtk_widget_set_sensitive(recompile_button, false);
+static void set_compiling(bool new_compiling) {
+  compiling = new_compiling;
+  gtk_widget_set_sensitive(recompile_button, !compiling);
+
+  for (int i = 0; i < num_panes; i++) {
+    set_compiler_widget_compiling(compiler_widgets[i], compiling);
+  }
 }
 
 static void compile_done() {
-  enable_compile();
+  //set_compiling(false);
 }
 
 static void compile_start() {
@@ -45,14 +76,14 @@ static void compile_start() {
     return;
   }
 
-  //Disable recompilation button until it's done
-  disable_compile();
+  //Disable recompilation button and widgets until it's done
+  set_compiling(true);
 
   //Load the file content
   char* data;
   gsize size;
   if (!opened_file || !g_file_load_contents(opened_file, NULL, &data, &size, NULL, NULL)) {
-    enable_compile();
+    set_compiling(false);
     return;
   }
 
@@ -86,9 +117,8 @@ static void set_pane_button_sensitivity() {
 }
 
 static void add_button_clicked_callback() {
-  //Add a new pane
-  add_new_pane(paned_frame, create_pane_content());
-  num_panes++;
+  //Add a new pane with content
+  add_new_pane(paned_frame, add_compiler_widget());
 
   //Resize and update buttons
   resize_panes(paned_frame, num_panes);
@@ -96,9 +126,9 @@ static void add_button_clicked_callback() {
 }
 
 static void remove_button_clicked_callback() {
-  //Remove the last pane
+  //Remove the last pane and content
+  remove_compiler_widget(compiler_widgets[num_panes - 1]);
   remove_last_pane(paned_frame);
-  num_panes--;
 
   //Resize and update buttons
   resize_panes(paned_frame, num_panes);
@@ -202,10 +232,9 @@ static void setup_content(GtkWidget* window) {
   //Create the first pane and add to the frame
   GtkWidget* first_paned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_frame_set_child(GTK_FRAME(paned_frame), first_paned);
-  num_panes = 1;
 
   //Create the initial pane content
-  gtk_paned_set_start_child(GTK_PANED(first_paned), create_pane_content());
+  gtk_paned_set_start_child(GTK_PANED(first_paned), add_compiler_widget());
 
   set_pane_button_sensitivity();
 }
@@ -228,6 +257,10 @@ int main(int argc, char* argv[]) {
   app = adw_application_new("io.github.stuarthayhurst.Crystal", G_APPLICATION_DEFAULT_FLAGS);
   g_signal_connect(app, "activate", G_CALLBACK(activate_callback), NULL);
   int result = g_application_run(G_APPLICATION(app), argc, argv);
+
+  if (compiler_widgets != NULL) {
+    free(compiler_widgets);
+  }
 
   free_opened_file();
   g_object_unref(app);
