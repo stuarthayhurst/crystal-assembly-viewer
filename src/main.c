@@ -6,6 +6,8 @@
 #include "compiler_widget.h"
 #include "panes.h"
 
+#define MAX_NUM_PANES 4
+
 static GtkWidget* window;
 static GtkWidget* paned_frame;
 static GtkWidget* add_pane_button;
@@ -101,8 +103,8 @@ static void compile_start() {
 }
 
 static void set_pane_button_sensitivity() {
-  //Deactivate the add button when 4+ panes exist
-  if (num_panes < 4) {
+  //Deactivate the add button when the maximum number of panes exists
+  if (num_panes < MAX_NUM_PANES) {
     gtk_widget_set_sensitive(add_pane_button, true);
   } else {
     gtk_widget_set_sensitive(add_pane_button, false);
