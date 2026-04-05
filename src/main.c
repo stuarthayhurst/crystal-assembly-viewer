@@ -43,7 +43,7 @@ static void set_compiling(bool new_compiling) {
 }
 
 static void compile_done() {
-  //set_compiling(false);
+  set_compiling(false);
 }
 
 static void compile_start() {
