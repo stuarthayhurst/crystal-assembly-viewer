@@ -7,7 +7,7 @@
     - Use `make -j$(nproc)` to build with all available threads
   - `make clean`: Cleans the build environment
   - `DEBUG=[true/false]`: Environment variable to enable debug support
-    - Includes debug symbols and retains the frame pointer
+    - Includes debug symbols, retains the frame pointer and enables sanitisers
     - `make debug` runs `make build` in debug mode
   - `BUILD_DIR`: Environment variable to configure built object output
 
