@@ -22,6 +22,8 @@ static GFile* opened_file = NULL;
 
 static GtkWidget* compiler_widgets[MAX_NUM_PANES];
 
+static void set_pane_button_sensitivity();
+
 static GtkWidget* add_compiler_widget() {
   num_panes++;
 
@@ -40,8 +42,8 @@ static void set_compiling(bool new_compiling) {
   //Toggle controls availability
   gtk_widget_set_sensitive(file_button, !compiling);
   gtk_widget_set_sensitive(recompile_button, !compiling);
-  gtk_widget_set_sensitive(add_pane_button, !compiling);
-  gtk_widget_set_sensitive(remove_pane_button, !compiling);
+
+  set_pane_button_sensitivity();
 
   for (int i = 0; i < num_panes; i++) {
     set_compiler_widget_compiling(compiler_widgets[i], compiling);
@@ -83,6 +85,12 @@ static void compile_start() {
 }
 
 static void set_pane_button_sensitivity() {
+  //Deactivate both buttons when compiling
+  if (compiling) {
+    gtk_widget_set_sensitive(add_pane_button, false);
+    gtk_widget_set_sensitive(remove_pane_button, false);
+  }
+
   //Deactivate the add button when the maximum number of panes exists
   if (num_panes < MAX_NUM_PANES) {
     gtk_widget_set_sensitive(add_pane_button, true);
