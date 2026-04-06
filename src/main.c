@@ -12,6 +12,7 @@ static GtkWidget* window;
 static GtkWidget* paned_frame;
 static GtkWidget* add_pane_button;
 static GtkWidget* remove_pane_button;
+static GtkWidget* file_button;
 static GtkWidget* file_label;
 static GtkWidget* recompile_button;
 
@@ -35,7 +36,12 @@ static void remove_last_compiler_widget() {
 
 static void set_compiling(bool new_compiling) {
   compiling = new_compiling;
+
+  //Toggle controls availability
+  gtk_widget_set_sensitive(file_button, !compiling);
   gtk_widget_set_sensitive(recompile_button, !compiling);
+  gtk_widget_set_sensitive(add_pane_button, !compiling);
+  gtk_widget_set_sensitive(remove_pane_button, !compiling);
 
   for (int i = 0; i < num_panes; i++) {
     set_compiler_widget_compiling(compiler_widgets[i], compiling);
@@ -172,7 +178,7 @@ static void setup_content(GtkWidget* window) {
   gtk_box_set_spacing(GTK_BOX(file_box), 8);
 
   //Create a button to open a file
-  GtkWidget* file_button = gtk_button_new_from_icon_name("document-open-symbolic");
+  file_button = gtk_button_new_from_icon_name("document-open-symbolic");
   g_signal_connect(file_button, "clicked", G_CALLBACK(file_button_clicked_callback), NULL);
   gtk_box_append(GTK_BOX(file_box), file_button);
 
