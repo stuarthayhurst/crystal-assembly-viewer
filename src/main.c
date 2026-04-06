@@ -71,13 +71,6 @@ static void compile_start() {
     return;
   }
 
-//TODO: Put the data somewhere
-//TODO: Queue up the compile jobs - GLib has a thread pool?
-//TODO: Apply the results of the compile
-//TODO: Free the input data
-//TODO: Handle exiting while jobs are running
-//TODO: Add a spinner while jobs are running
-
   g_message(data);
   g_free(data);
 
