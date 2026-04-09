@@ -13,6 +13,7 @@
 
 ## Usage:
   - `./build/crystal`
+  - Compilers can only be detected if they're reachable from `$PATH`
 
 ## Dependencies:
   - Package names are correct for Debian, other distros may vary
