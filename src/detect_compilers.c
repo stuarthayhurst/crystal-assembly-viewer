@@ -103,9 +103,8 @@ static unsigned int get_base_path_length(const char* path) {
   }
 
   //Strip the final component
-  const unsigned int orig_base_path_length = base_path_length;
-  for (unsigned int i = 0; i < orig_base_path_length; i++) {
-    bool is_slash = (path[(orig_base_path_length - 1) - i] == '/');
+  for (int i = base_path_length - 1; i >= 0; i--) {
+    bool is_slash = (path[i] == '/');
     base_path_length--;
 
     if (is_slash) {
