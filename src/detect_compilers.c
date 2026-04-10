@@ -45,8 +45,12 @@ static bool file_id_matches(const struct file_id* a, const struct file_id* b) {
   return (a->inode == b->inode) && (a->device == b->device);
 }
 
-//Return true if the path is a component of itself
-static bool is_path_loop(const char* directory_path) {
+/*
+ - Return true if the path is a component of itself
+ - Don't check the first ignored_path_length characters
+   - This avoids excluding symlinks that link to a component of the base path
+*/
+static bool is_path_loop(const char* directory_path, unsigned int ignored_path_length) {
   //Get the file ID of the final component
   struct file_id final_id;
   get_file_id(directory_path, &final_id);
@@ -62,7 +66,7 @@ static bool is_path_loop(const char* directory_path) {
   */
   for (unsigned int i = 0; i < directory_length; i++) {
     //Ignore an empty path
-    if (directory_length - (i + 1) == 0) {
+    if (directory_length - (i + 1) <= ignored_path_length) {
       break;
     }
 
@@ -84,13 +88,42 @@ static bool is_path_loop(const char* directory_path) {
   return false;
 }
 
+//Return the length of the non-final components
+static unsigned int get_base_path_length(const char* path) {
+  const unsigned int path_length = strlen(path);
+  unsigned int base_path_length = path_length;
+
+  //Strip terminating /
+  for (unsigned int i = 0; i < path_length; i++) {
+    if (path[(path_length - 1) - i] == '/') {
+      base_path_length--;
+    } else {
+      break;
+    }
+  }
+
+  //Strip the final component
+  const unsigned int orig_base_path_length = base_path_length;
+  for (unsigned int i = 0; i < orig_base_path_length; i++) {
+    bool is_slash = (path[(orig_base_path_length - 1) - i] == '/');
+    base_path_length--;
+
+    if (is_slash) {
+      break;
+    }
+  }
+
+  return base_path_length;
+}
+
 /*
  - Recursively find all compilers in directory_path
  - Store them in compile_array, if it's not NULL
  - Returns the number of compilers found
 */
 static unsigned int search_compiler_directory(char** compiler_array,
-                                              const char* directory_path) {
+                                              const char* directory_path,
+                                              unsigned int ignored_path_length) {
   const unsigned int path_length = strlen(directory_path);
   unsigned int detected_compiler_count = 0;
 
@@ -131,7 +164,7 @@ static unsigned int search_compiler_directory(char** compiler_array,
       }
 
       //Ignore symlinks causing loops
-      if (is_path_loop(child_path)) {
+      if (is_path_loop(child_path, ignored_path_length)) {
         dirent_ptr = readdir(dir_descriptor);
         free(child_path);
         continue;
@@ -139,7 +172,8 @@ static unsigned int search_compiler_directory(char** compiler_array,
 
       //Find the next empty element to write to, then search the directory
       char** compiler_array_next = get_next_slot(compiler_array, detected_compiler_count);
-      detected_compiler_count += search_compiler_directory(compiler_array_next, child_path);
+      detected_compiler_count += search_compiler_directory(compiler_array_next, child_path,
+                                                           ignored_path_length);
     } else if (is_file) {
       //Save the path if it's a known compiler
       enum compiler_type_enum compiler_type = identify_compiler(child_path);
@@ -192,8 +226,9 @@ static unsigned int fill_compiler_array(char** compiler_array, const char* searc
           directory_path[path_length] = 0;
 
           //Search the path directory
+          unsigned int ignored_path_length = get_base_path_length(directory_path);
           detected_compiler_count += search_compiler_directory(compiler_array_next,
-                                                               directory_path);
+                                                               directory_path, ignored_path_length);
           free(directory_path);
         }
 
