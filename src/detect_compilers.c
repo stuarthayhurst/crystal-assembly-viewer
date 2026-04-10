@@ -205,12 +205,16 @@ static unsigned int search_compiler_directory(char** compiler_array,
 static unsigned int fill_compiler_array(char** compiler_array, const char* search_path_var) {
   unsigned int detected_compiler_count = 0;
 
-  //Search all directories in PATH, delimited by a colon
+  //Search all directories in PATH, delimited by a colon or string end
   unsigned int path_start = 0;
   unsigned int path_end = 0;
-  while (search_path_var[path_end] != 0) {
+  bool is_string_end = (search_path_var[path_end] == 0);
+  while (!is_string_end) {
+    is_string_end = (search_path_var[path_end] == 0);
+    const bool is_component_end = is_string_end || search_path_var[path_end] == ':';
+
     //Search the path, or ignore it if it's escaped
-    if (search_path_var[path_end] == ':') {
+    if (is_component_end) {
       const unsigned int path_length = path_end - path_start;
       if (path_length > 0 && search_path_var[path_end - 1] == '\\') {
         continue;
