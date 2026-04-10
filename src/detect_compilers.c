@@ -56,7 +56,7 @@ static bool is_path_loop(const char* directory_path, unsigned int ignored_path_l
   get_file_id(directory_path, &final_id);
 
   const unsigned int directory_length = strlen(directory_path);
-  char* string_buffer = malloc(directory_length + 1);
+  char* string_buffer = malloc(sizeof(char) * (directory_length + 1));
   memcpy(string_buffer, directory_path, directory_length + 1);
 
   /*
@@ -302,9 +302,9 @@ static unsigned int fill_unique_compilers(char** compiler_array, unsigned int co
     if (!matched) {
       if (unique_compiler_array != NULL) {
         //Allocate space for the compiler and copy it
-        const unsigned int compiler_size = strlen(compiler_array[i]) + 1;
-        unique_compiler_array[unique_compiler_count] = malloc(sizeof(char) * compiler_size);
-        memcpy(unique_compiler_array[unique_compiler_count], compiler_array[i], compiler_size);
+        const unsigned int compiler_length = strlen(compiler_array[i]) + 1;
+        unique_compiler_array[unique_compiler_count] = malloc(sizeof(char) * compiler_length);
+        memcpy(unique_compiler_array[unique_compiler_count], compiler_array[i], compiler_length);
       }
 
       unique_compiler_count++;
