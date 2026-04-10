@@ -12,8 +12,9 @@
 #include "match_compiler.h"
 
 //Find the next empty element to write to, handling NULL
-static char** get_next_slot(char** compiler_array, unsigned int detected_compiler_count) {
-  char** compiler_array_next = compiler_array + detected_compiler_count;
+static struct compiler_info* get_next_slot(struct compiler_info* compiler_array,
+                                           unsigned int detected_compiler_count) {
+  struct compiler_info* compiler_array_next = compiler_array + detected_compiler_count;
   if (compiler_array == NULL) {
     compiler_array_next = NULL;
   }
@@ -57,7 +58,7 @@ static bool is_path_loop(const char* directory_path, unsigned int ignored_path_l
 
   const unsigned int directory_length = strlen(directory_path);
   char* string_buffer = malloc(sizeof(char) * (directory_length + 1));
-  memcpy(string_buffer, directory_path, directory_length + 1);
+  memcpy(string_buffer, directory_path, sizeof(char) * (directory_length + 1));
 
   /*
    - Compare the file ID of each path component to the final component's ID
@@ -115,12 +116,66 @@ static unsigned int get_base_path_length(const char* path) {
   return base_path_length;
 }
 
+//Write a compiler info struct from values
+static void write_compiler_info(struct compiler_info* info, const char* compiler_name,
+                                enum compiler_type_enum compiler_type) {
+  //Allocate and copy the name
+  unsigned int compiler_name_size = sizeof(char) * (strlen(compiler_name) + 1);
+  info->path = malloc(compiler_name_size);
+  memcpy(info->path, compiler_name, compiler_name_size);
+
+  //Set the type
+  info->type = compiler_type;
+}
+
+/*
+ - Write a compiler info struct from values
+ - info may be null, and nothing will happen
+*/
+static void write_compiler_info_entry(struct compiler_info* info, unsigned int entry_index,
+                                      const char* compiler_name,
+                                      enum compiler_type_enum compiler_type) {
+  //Don't write anything when calculating sizes
+  if (info == NULL) {
+    return;
+  }
+
+  write_compiler_info(info + entry_index, compiler_name, compiler_type);
+}
+
+/*
+ - Copy src to an index to dest
+ - dest may be NULL, and nothing will happen
+*/
+static void copy_compiler_info_entry(struct compiler_info* src, struct compiler_info* dest,
+                                     unsigned int entry_index) {
+  if (dest != NULL) {
+    write_compiler_info(dest + entry_index, src->path, src->type);
+  }
+}
+
+static void free_compiler_info_contents(struct compiler_info* info) {
+  if (info->path != NULL) {
+    free(info->path);
+  }
+}
+
+static struct compiler_info* allocate_compiler_array(unsigned int compiler_count) {
+  struct compiler_info* compiler_array = malloc(sizeof(struct compiler_info) * compiler_count);
+  for (unsigned int i = 0; i < compiler_count; i++) {
+    compiler_array[i].path = NULL;
+    compiler_array[i].type = UNKNOWN_COMPILER;
+  }
+
+  return compiler_array;
+}
+
 /*
  - Recursively find all compilers in directory_path
  - Store them in compile_array, if it's not NULL
  - Returns the number of compilers found
 */
-static unsigned int search_compiler_directory(char** compiler_array,
+static unsigned int search_compiler_directory(struct compiler_info* compiler_array,
                                               const char* directory_path,
                                               unsigned int ignored_path_length) {
   const unsigned int path_length = strlen(directory_path);
@@ -170,21 +225,17 @@ static unsigned int search_compiler_directory(char** compiler_array,
       }
 
       //Find the next empty element to write to, then search the directory
-      char** compiler_array_next = get_next_slot(compiler_array, detected_compiler_count);
+      struct compiler_info* compiler_array_next = get_next_slot(compiler_array,
+                                                                detected_compiler_count);
       detected_compiler_count += search_compiler_directory(compiler_array_next, child_path,
                                                            ignored_path_length);
     } else if (is_file) {
       //Save the path if it's a known compiler
       enum compiler_type_enum compiler_type = identify_compiler(child_path);
       if (compiler_type != UNKNOWN_COMPILER) {
-        //Find the next empty element to write to
-        char** compiler_array_next = get_next_slot(compiler_array, detected_compiler_count);
-
-        //Copy the string to the array
-        if (compiler_array_next != NULL) {
-          *compiler_array_next = malloc(child_path_size);
-          memcpy(*compiler_array_next, child_path, child_path_size);
-        }
+        //Create the array entry
+        write_compiler_info_entry(compiler_array, detected_compiler_count,
+                                  child_path, compiler_type);
         detected_compiler_count++;
       }
     }
@@ -201,7 +252,8 @@ static unsigned int search_compiler_directory(char** compiler_array,
  - Fill compiler_array with paths to compiler binaries, return the number of written entries
  - If compiler_array is NULL, just return the number of entries found
 */
-static unsigned int fill_compiler_array(char** compiler_array, const char* search_path_var) {
+static unsigned int fill_compiler_array(struct compiler_info* compiler_array,
+                                        const char* search_path_var) {
   unsigned int detected_compiler_count = 0;
 
   //Search all directories in PATH, delimited by a colon or string end
@@ -219,13 +271,14 @@ static unsigned int fill_compiler_array(char** compiler_array, const char* searc
         continue;
       } else {
         //Find the next empty element to write
-        char** compiler_array_next = get_next_slot(compiler_array, detected_compiler_count);
+        struct compiler_info* compiler_array_next = get_next_slot(compiler_array,
+                                                                  detected_compiler_count);
 
         //Find the compilers in the path directory
         if (path_length > 1) {
           //Copy the path to a null-terminated string
           char* directory_path = malloc(sizeof(char) * (path_length + 1));
-          memcpy(directory_path, search_path_var + path_start, path_length);
+          memcpy(directory_path, search_path_var + path_start, sizeof(char) * path_length);
           directory_path[path_length] = '\0';
 
           //Search the path directory
@@ -250,7 +303,7 @@ static unsigned int fill_compiler_array(char** compiler_array, const char* searc
  - Return an array containing the paths for all compilers found in PATH
  - Write the number of entries to compiler_count
 */
-static char** detect_compilers(unsigned int* compiler_count) {
+static struct compiler_info* detect_compilers(unsigned int* compiler_count) {
   //Get the PATH from the environment
   const char* search_path_var = getenv("PATH");
   if (search_path_var == NULL) {
@@ -262,7 +315,7 @@ static char** detect_compilers(unsigned int* compiler_count) {
 
   //Find the number of compilers available, allocate space and return them
   *compiler_count = fill_compiler_array(NULL, search_path_var);
-  char** compiler_array = malloc(sizeof(char*) * *compiler_count);
+  struct compiler_info* compiler_array = allocate_compiler_array(*compiler_count);
   fill_compiler_array(compiler_array, search_path_var);
 
   return compiler_array;
@@ -273,13 +326,14 @@ static char** detect_compilers(unsigned int* compiler_count) {
  - Return the number of unique entries
  - If unique_compiler_array is NULL, just return the number of unique entries
 */
-static unsigned int fill_unique_compilers(char** compiler_array, unsigned int compiler_count,
-                                          char** unique_compiler_array) {
+static unsigned int fill_unique_compilers(struct compiler_info* compiler_array,
+                                          unsigned int compiler_count,
+                                          struct compiler_info* unique_compiler_array) {
   unsigned int unique_compiler_count = 0;
   for (unsigned int i = 0; i < compiler_count; i++) {
     //Get the file ID of the compiler to check for duplicates of
     struct file_id compiler_file_id;
-    get_file_id(compiler_array[i], &compiler_file_id);
+    get_file_id(compiler_array[i].path, &compiler_file_id);
 
     /*
      - Look for duplicates in the previous entries
@@ -289,7 +343,7 @@ static unsigned int fill_unique_compilers(char** compiler_array, unsigned int co
     for (unsigned int j = 0; j < i; j++) {
       //Find the file ID of the potential match
       struct file_id nested_compiler_file_id;
-      get_file_id(compiler_array[j], &nested_compiler_file_id);
+      get_file_id(compiler_array[j].path, &nested_compiler_file_id);
 
       //Check if the files match for a duplicate
       if (file_id_matches(&compiler_file_id, &nested_compiler_file_id)) {
@@ -300,13 +354,8 @@ static unsigned int fill_unique_compilers(char** compiler_array, unsigned int co
 
     //If the compiler was unique so far, include it
     if (!matched) {
-      if (unique_compiler_array != NULL) {
-        //Allocate space for the compiler and copy it
-        const unsigned int compiler_length = strlen(compiler_array[i]) + 1;
-        unique_compiler_array[unique_compiler_count] = malloc(sizeof(char) * compiler_length);
-        memcpy(unique_compiler_array[unique_compiler_count], compiler_array[i], compiler_length);
-      }
-
+      //Copy the unique entry
+      copy_compiler_info_entry(&compiler_array[i], unique_compiler_array, unique_compiler_count);
       unique_compiler_count++;
     }
   }
@@ -318,11 +367,12 @@ static unsigned int fill_unique_compilers(char** compiler_array, unsigned int co
  - Return a new array containing the unique entries of compiler_array, by file ID
  - Write the number of unique entries to unique_compiler_count
 */
-char** select_unique_compilers(char** compiler_array, unsigned int compiler_count,
-                               unsigned int* unique_compiler_count) {
+struct compiler_info* select_unique_compilers(struct compiler_info* compiler_array,
+                                              unsigned int compiler_count,
+                                              unsigned int* unique_compiler_count) {
   //Allocate space for the unique entries
   *unique_compiler_count = fill_unique_compilers(compiler_array, compiler_count, NULL);
-  char** unique_compiler_array = malloc(sizeof(char*) * *unique_compiler_count);
+  struct compiler_info* unique_compiler_array = allocate_compiler_array(*unique_compiler_count);
 
   //Fill the array and return it
   fill_unique_compilers(compiler_array, compiler_count, unique_compiler_array);
@@ -333,13 +383,13 @@ char** select_unique_compilers(char** compiler_array, unsigned int compiler_coun
  - Return an array containing the paths for all unique compilers found in PATH
  - Write the number of entries to compiler_count
 */
-char** detect_unique_compilers(unsigned int* compiler_count) {
+struct compiler_info* detect_unique_compilers(unsigned int* compiler_count) {
   unsigned int all_compilers_count = 0;
-  char** compiler_array = detect_compilers(&all_compilers_count);
+  struct compiler_info* compiler_array = detect_compilers(&all_compilers_count);
 
   //Create a new array with the unique entries
-  char** unique_compiler_array = select_unique_compilers(compiler_array, all_compilers_count,
-                                                         compiler_count);
+  struct compiler_info* unique_compiler_array =
+    select_unique_compilers(compiler_array, all_compilers_count, compiler_count);
 
   //Free the original array
   free_compiler_array(compiler_array, all_compilers_count);
@@ -347,10 +397,12 @@ char** detect_unique_compilers(unsigned int* compiler_count) {
   return unique_compiler_array;
 }
 
-void free_compiler_array(char** compiler_paths, unsigned int compiler_count) {
+void free_compiler_array(struct compiler_info* compiler_array, unsigned int compiler_count) {
+  //Free each entry's contents
   for (unsigned int i = 0; i < compiler_count; i++) {
-    free(compiler_paths[i]);
+    free_compiler_info_contents(&compiler_array[i]);
   }
 
-  free(compiler_paths);
+  //Free the array itself
+  free(compiler_array);
 }
