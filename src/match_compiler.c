@@ -38,7 +38,7 @@ static bool string_matches(const char* path, const char* prefix) {
 
 static bool string_is_numerical(const char* string) {
   bool is_numerical = false;
-  while (*string != 0) {
+  while (*string != '\0') {
     if (*string >= '0' && *string <= '9') {
       is_numerical = true;
     } else {

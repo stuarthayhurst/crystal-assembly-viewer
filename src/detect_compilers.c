@@ -72,7 +72,7 @@ static bool is_path_loop(const char* directory_path, unsigned int ignored_path_l
 
     //If the remaining path is a component, check it
     if (directory_path[directory_length - (i + 1)] == '/') {
-      string_buffer[directory_length - (i + 1)] = 0;
+      string_buffer[directory_length - (i + 1)] = '\0';
 
       struct file_id segment_id;
       get_file_id(string_buffer, &segment_id);
@@ -207,9 +207,9 @@ static unsigned int fill_compiler_array(char** compiler_array, const char* searc
   //Search all directories in PATH, delimited by a colon or string end
   unsigned int path_start = 0;
   unsigned int path_end = 0;
-  bool is_string_end = (search_path_var[path_end] == 0);
+  bool is_string_end = (search_path_var[path_end] == '\0');
   while (!is_string_end) {
-    is_string_end = (search_path_var[path_end] == 0);
+    is_string_end = (search_path_var[path_end] == '\0');
     const bool is_component_end = is_string_end || search_path_var[path_end] == ':';
 
     //Search the path, or ignore it if it's escaped
@@ -226,7 +226,7 @@ static unsigned int fill_compiler_array(char** compiler_array, const char* searc
           //Copy the path to a null-terminated string
           char* directory_path = malloc(sizeof(char) * (path_length + 1));
           memcpy(directory_path, search_path_var + path_start, path_length);
-          directory_path[path_length] = 0;
+          directory_path[path_length] = '\0';
 
           //Search the path directory
           unsigned int ignored_path_length = get_base_path_length(directory_path);
