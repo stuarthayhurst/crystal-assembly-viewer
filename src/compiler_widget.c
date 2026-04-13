@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include <adwaita.h>
 
@@ -26,7 +27,6 @@ void free_compiler_strings() {
 
 //Return the index of the selected compiler, or -1 if unselected
 int get_compiler_index(GtkWidget* compiler_widget) {
-  //GtkWidget* vbox = gtk_widget_get_first_child(compiler_widget);
   GtkWidget* hbox = gtk_widget_get_first_child(compiler_widget);
   GtkWidget* compiler_selector = gtk_widget_get_last_child(hbox);
 
@@ -36,6 +36,24 @@ int get_compiler_index(GtkWidget* compiler_widget) {
   }
 
   return selected_index;
+}
+
+//Return a string for the compiler arguments provided
+char* get_user_compiler_arguments(GtkWidget* compiler_widget) {
+  GtkWidget* hbox = gtk_widget_get_first_child(compiler_widget);
+  GtkWidget* compiler_arguments = gtk_widget_get_first_child(hbox);
+
+  //Fetch the buffer information
+  GtkEntryBuffer* entry_buffer = gtk_entry_get_buffer(GTK_ENTRY(compiler_arguments));
+  const guint buffer_length = gtk_entry_buffer_get_length(entry_buffer);
+  const gchar* buffer_data = gtk_entry_buffer_get_text(entry_buffer);
+
+  //Allocate a buffer and copy the arguments
+  char* arguments_string = malloc(sizeof(char) * (buffer_length + 1));
+  memcpy(arguments_string, buffer_data, sizeof(char) * buffer_length);
+  arguments_string[buffer_length] = '\0';
+
+  return arguments_string;
 }
 
 GtkWidget* create_compiler_widget() {

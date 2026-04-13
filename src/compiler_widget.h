@@ -9,6 +9,7 @@ void send_compiler_infos(const struct compiler_info* compiler_info, unsigned int
 void free_compiler_strings();
 
 int get_compiler_index(GtkWidget* compiler_widget);
+char* get_user_compiler_arguments(GtkWidget* compiler_widget);
 
 GtkWidget* create_compiler_widget();
 void set_compiler_widget_compiling(GtkWidget* compiler_widget, bool compiling);

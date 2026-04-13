@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -82,6 +83,10 @@ static void compile_start() {
     } else {
       printf("Pane %u has no compiler selected\n", i);
     }
+
+    char* user_compiler_arguments = get_user_compiler_arguments(compiler_widgets[i]);
+    printf("  User arguments: '%s'\n", user_compiler_arguments);
+    free(user_compiler_arguments);
   }
 
   g_message(data);
