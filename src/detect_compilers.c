@@ -56,9 +56,8 @@ static bool is_path_loop(const char* directory_path, unsigned int ignored_path_l
   struct file_id final_id;
   get_file_id(directory_path, &final_id);
 
+  char* string_buffer = strdup(directory_path);
   const unsigned int directory_length = strlen(directory_path);
-  char* string_buffer = malloc(sizeof(char) * (directory_length + 1));
-  memcpy(string_buffer, directory_path, sizeof(char) * (directory_length + 1));
 
   /*
    - Compare the file ID of each path component to the final component's ID
@@ -120,9 +119,7 @@ static unsigned int get_base_path_length(const char* path) {
 static void write_compiler_info(struct compiler_info* info, const char* compiler_name,
                                 enum compiler_type_enum compiler_type) {
   //Allocate and copy the name
-  unsigned int compiler_name_size = sizeof(char) * (strlen(compiler_name) + 1);
-  info->path = malloc(compiler_name_size);
-  memcpy(info->path, compiler_name, compiler_name_size);
+  info->path = strdup(compiler_name);
 
   //Set the type
   info->type = compiler_type;
@@ -277,9 +274,7 @@ static unsigned int fill_compiler_array(struct compiler_info* compiler_array,
         //Find the compilers in the path directory
         if (path_length > 1) {
           //Copy the path to a null-terminated string
-          char* directory_path = malloc(sizeof(char) * (path_length + 1));
-          memcpy(directory_path, search_path_var + path_start, sizeof(char) * path_length);
-          directory_path[path_length] = '\0';
+          char* directory_path = strndup(search_path_var + path_start, sizeof(char) * path_length);
 
           //Search the path directory
           unsigned int ignored_path_length = get_base_path_length(directory_path);

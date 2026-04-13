@@ -43,17 +43,10 @@ char* get_user_compiler_arguments(GtkWidget* compiler_widget) {
   GtkWidget* hbox = gtk_widget_get_first_child(compiler_widget);
   GtkWidget* compiler_arguments = gtk_widget_get_first_child(hbox);
 
-  //Fetch the buffer information
+  //Fetch the arguments and return a copy
   GtkEntryBuffer* entry_buffer = gtk_entry_get_buffer(GTK_ENTRY(compiler_arguments));
-  const guint buffer_length = gtk_entry_buffer_get_length(entry_buffer);
   const gchar* buffer_data = gtk_entry_buffer_get_text(entry_buffer);
-
-  //Allocate a buffer and copy the arguments
-  char* arguments_string = malloc(sizeof(char) * (buffer_length + 1));
-  memcpy(arguments_string, buffer_data, sizeof(char) * buffer_length);
-  arguments_string[buffer_length] = '\0';
-
-  return arguments_string;
+  return strdup(buffer_data);
 }
 
 GtkWidget* create_compiler_widget() {
