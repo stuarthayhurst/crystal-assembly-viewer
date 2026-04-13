@@ -255,9 +255,9 @@ int main(int argc, char* argv[]) {
   compiler_infos = detect_unique_compilers(&compiler_count);
   send_compiler_infos(compiler_infos, compiler_count);
 
-  //TODO: debug
+  //Log detected compilers
   for (unsigned int i = 0; i < compiler_count; i++) {
-    printf("%s\n", compiler_infos[i].path);
+    printf("Found '%s'\n", compiler_infos[i].path);
   }
 
   app = adw_application_new("io.github.stuarthayhurst.Crystal", G_APPLICATION_DEFAULT_FLAGS);
