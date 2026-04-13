@@ -17,7 +17,7 @@ static GtkWidget* file_button;
 static GtkWidget* file_label;
 static GtkWidget* recompile_button;
 
-static int num_panes = 0;
+static unsigned int num_panes = 0;
 static bool compiling = false;
 static GFile* opened_file = NULL;
 
@@ -47,7 +47,7 @@ static void set_compiling(bool new_compiling) {
 
   set_pane_button_sensitivity();
 
-  for (int i = 0; i < num_panes; i++) {
+  for (unsigned int i = 0; i < num_panes; i++) {
     set_compiler_widget_compiling(compiler_widgets[i], compiling);
   }
 }
@@ -74,13 +74,13 @@ static void compile_start() {
   }
 
   //TODO: debug - print the selected compilers
-  for (int i = 0; i < num_panes; i++) {
+  for (unsigned int i = 0; i < num_panes; i++) {
     int index = get_compiler_index(compiler_widgets[i]);
     if (index != -1) {
-      printf("Pane %d is using compiler index %d, path '%s'\n", i, index,
+      printf("Pane %u is using compiler index %d, path '%s'\n", i, index,
              compiler_infos[index].path);
     } else {
-      printf("Pane %d has no compiler selected\n", i);
+      printf("Pane %u has no compiler selected\n", i);
     }
   }
 

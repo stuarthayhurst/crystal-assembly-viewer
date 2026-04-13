@@ -36,7 +36,7 @@ void remove_last_pane(GtkWidget* paned_frame) {
   gtk_paned_set_end_child(GTK_PANED(last_paned_parent), NULL);
 }
 
-void resize_panes(GtkWidget* paned_frame, int num_panes) {
+void resize_panes(GtkWidget* paned_frame, unsigned int num_panes) {
   int width = gtk_widget_get_width(paned_frame);
   int position = width / num_panes;
 
