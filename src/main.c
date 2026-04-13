@@ -4,6 +4,7 @@
 #include <adwaita.h>
 
 #include "compiler_widget.h"
+#include "detect_compilers.h"
 #include "panes.h"
 
 #define MAX_NUM_PANES 4
@@ -21,6 +22,7 @@ static bool compiling = false;
 static GFile* opened_file = NULL;
 
 static GtkWidget* compiler_widgets[MAX_NUM_PANES];
+struct compiler_info* compiler_infos;
 
 static void set_pane_button_sensitivity();
 
@@ -69,6 +71,17 @@ static void compile_start() {
   if (!opened_file || !g_file_load_contents(opened_file, NULL, &data, &size, NULL, NULL)) {
     set_compiling(false);
     return;
+  }
+
+  //TODO: debug - print the selected compilers
+  for (int i = 0; i < num_panes; i++) {
+    int index = get_compiler_index(compiler_widgets[i]);
+    if (index != -1) {
+      printf("Pane %d is using compiler index %d, path '%s'\n", i, index,
+             compiler_infos[index].path);
+    } else {
+      printf("Pane %d has no compiler selected\n", i);
+    }
   }
 
   g_message(data);
@@ -237,11 +250,24 @@ static void activate_callback(GtkApplication* app) {
 int main(int argc, char* argv[]) {
   AdwApplication* app;
 
+  //Detect compilers
+  unsigned int compiler_count = 0;
+  compiler_infos = detect_unique_compilers(&compiler_count);
+  send_compiler_infos(compiler_infos, compiler_count);
+
+  //TODO: debug
+  for (unsigned int i = 0; i < compiler_count; i++) {
+    printf("%s\n", compiler_infos[i].path);
+  }
+
   app = adw_application_new("io.github.stuarthayhurst.Crystal", G_APPLICATION_DEFAULT_FLAGS);
   g_signal_connect(app, "activate", G_CALLBACK(activate_callback), NULL);
   int result = g_application_run(G_APPLICATION(app), argc, argv);
 
   free_opened_file();
   g_object_unref(app);
+  free_compiler_strings();
+  free_compiler_array(compiler_infos, compiler_count);
+
   return result;
 }

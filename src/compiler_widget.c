@@ -1,13 +1,49 @@
+#include <stdlib.h>
+
 #include <adwaita.h>
 
 #include "compiler_widget.h"
+
+#include "detect_compilers.h"
+
+static const char** compiler_paths = nullptr;
+static unsigned int compiler_count = 0;
+
+void send_compiler_infos(const struct compiler_info* infos, unsigned int count) {
+  compiler_count = count;
+
+  //Allocate the path array and copy the string points
+  compiler_paths = malloc(sizeof(char*) * (compiler_count + 1));
+  compiler_paths[compiler_count] = NULL;
+  for (unsigned int i = 0; i < compiler_count; i++) {
+    compiler_paths[i] = infos[i].path;
+  }
+}
+
+void free_compiler_strings() {
+  free(compiler_paths);
+}
+
+//Return the index of the selected compiler, or -1 if unselected
+int get_compiler_index(GtkWidget* compiler_widget) {
+  //GtkWidget* vbox = gtk_widget_get_first_child(compiler_widget);
+  GtkWidget* hbox = gtk_widget_get_first_child(compiler_widget);
+  GtkWidget* compiler_selector = gtk_widget_get_last_child(hbox);
+
+  guint selected_index = gtk_drop_down_get_selected(GTK_DROP_DOWN(compiler_selector));
+  if (selected_index == GTK_INVALID_LIST_POSITION) {
+    return -1;
+  }
+
+  return selected_index;
+}
 
 GtkWidget* create_compiler_widget() {
   //Vertical box for the config and output
   GtkWidget* vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
 
   //Horizontal box for the compiler config
-  GtkWidget* hbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
+  GtkWidget* hbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
   gtk_box_append(GTK_BOX(vbox), hbox);
 
   //Create a text entry for the compiler arguments
@@ -16,9 +52,15 @@ GtkWidget* create_compiler_widget() {
 
   //Put the entry in the horizontal box, and pad it
   gtk_box_append(GTK_BOX(hbox), compiler_arguments);
+  gtk_widget_set_hexpand(compiler_arguments, TRUE);
   gtk_widget_set_margin_start(compiler_arguments, 4);
-  gtk_widget_set_margin_end(compiler_arguments, 4);
   gtk_widget_set_margin_top(compiler_arguments, 4);
+
+  //Create a compiler selection dropdown
+  GtkWidget* compiler_selector = gtk_drop_down_new_from_strings(compiler_paths);
+  gtk_box_append(GTK_BOX(hbox), compiler_selector);
+  gtk_widget_set_margin_end(compiler_selector, 4);
+  gtk_widget_set_margin_top(compiler_selector, 4);
 
   //Create a frame for the output
   GtkWidget* text_frame = gtk_frame_new(NULL);
