@@ -24,6 +24,7 @@ static bool compiling = false;
 static GFile* opened_file = NULL;
 
 static GtkWidget* compiler_widgets[MAX_NUM_PANES];
+static char* compiler_widget_strings[MAX_NUM_PANES];
 static struct compiler_info* compiler_infos;
 
 static void set_pane_button_sensitivity();
@@ -36,8 +37,23 @@ static GtkWidget* add_compiler_widget() {
   return compiler_widgets[num_panes - 1];
 }
 
+static void free_compiler_widget_text(unsigned int widget_index) {
+  if (compiler_widget_strings[widget_index] != NULL) {
+    free(compiler_widget_strings[widget_index]);
+    compiler_widget_strings[widget_index] = NULL;
+  }
+}
+
 static void remove_last_compiler_widget() {
+  free_compiler_widget_text(num_panes - 1);
   num_panes--;
+}
+
+static void replace_compiler_widget_text(unsigned int widget_index, char* new_text) {
+  display_compiler_widget_text_content(compiler_widgets[widget_index], new_text);
+
+  free_compiler_widget_text(widget_index);
+  compiler_widget_strings[widget_index] = new_text;
 }
 
 static void set_compiling(bool new_compiling) {
@@ -86,10 +102,7 @@ static void compile_start() {
     //Compile the file
     char* compiler_output = run_compiler(compiler_infos, index, user_compiler_arguments, input_path);
     if (compiler_output != NULL) {
-//TODO: debug - print the compiler output
-      printf("%s\n", compiler_output);
-
-      free(compiler_output);
+      replace_compiler_widget_text(i, compiler_output);
     }
 
     free(user_compiler_arguments);
@@ -259,6 +272,11 @@ static void activate_callback(GtkApplication* app) {
 int main(int argc, char* argv[]) {
   AdwApplication* app;
 
+  for (unsigned int i = 0; i < MAX_NUM_PANES; i++) {
+    compiler_widgets[i] = NULL;
+    compiler_widget_strings[i] = NULL;
+  }
+
   //Detect compilers
   unsigned int compiler_info_count = 0;
   compiler_infos = detect_unique_compilers(&compiler_info_count);
@@ -275,6 +293,11 @@ int main(int argc, char* argv[]) {
 
   free_opened_file();
   g_object_unref(app);
+
+  for (unsigned int i = 0; i < MAX_NUM_PANES; i++) {
+    free_compiler_widget_text(i);
+  }
+
   free_compiler_strings();
   free_compiler_array(compiler_infos, compiler_info_count);
 
