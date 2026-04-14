@@ -7,6 +7,7 @@
 #include "compiler_widget.h"
 #include "detect_compilers.h"
 #include "panes.h"
+#include "run_compiler.h"
 
 #define MAX_NUM_PANES 4
 
@@ -23,7 +24,7 @@ static bool compiling = false;
 static GFile* opened_file = NULL;
 
 static GtkWidget* compiler_widgets[MAX_NUM_PANES];
-struct compiler_info* compiler_infos;
+static struct compiler_info* compiler_infos;
 
 static void set_pane_button_sensitivity();
 
@@ -63,35 +64,38 @@ static void compile_start() {
     return;
   }
 
-  //Disable recompilation button and widgets until it's done
-  set_compiling(true);
-
-  //Load the file content
-  char* data;
-  gsize size;
-  if (!opened_file || !g_file_load_contents(opened_file, NULL, &data, &size, NULL, NULL)) {
-    set_compiling(false);
+  //Give up early if no file has been provided
+  if (opened_file == NULL) {
     return;
   }
 
-  //TODO: debug - print the selected compilers
+  //Disable recompilation button and widgets until it's done
+  set_compiling(true);
+
+  //Fetch information and run each compiler
+  char* input_path = g_file_get_path(opened_file);
   for (unsigned int i = 0; i < num_panes; i++) {
     int index = get_compiler_index(compiler_widgets[i]);
-    if (index != -1) {
-      printf("Pane %u is using compiler index %d, path '%s'\n", i, index,
-             compiler_infos[index].path);
-    } else {
-      printf("Pane %u has no compiler selected\n", i);
+    if (index == -1) {
+      continue;
     }
 
+    //Fetch information required for compilation
     char* user_compiler_arguments = get_user_compiler_arguments(compiler_widgets[i]);
-    printf("  User arguments: '%s'\n", user_compiler_arguments);
+
+    //Compile the file
+    char* compiler_output = run_compiler(compiler_infos, index, user_compiler_arguments, input_path);
+    if (compiler_output != NULL) {
+//TODO: debug - print the compiler output
+      printf("%s\n", compiler_output);
+
+      free(compiler_output);
+    }
+
     free(user_compiler_arguments);
   }
 
-  g_message(data);
-  g_free(data);
-
+  free(input_path);
   compile_done();
 }
 
@@ -256,12 +260,12 @@ int main(int argc, char* argv[]) {
   AdwApplication* app;
 
   //Detect compilers
-  unsigned int compiler_count = 0;
-  compiler_infos = detect_unique_compilers(&compiler_count);
-  send_compiler_infos(compiler_infos, compiler_count);
+  unsigned int compiler_info_count = 0;
+  compiler_infos = detect_unique_compilers(&compiler_info_count);
+  send_compiler_infos(compiler_infos, compiler_info_count);
 
   //Log detected compilers
-  for (unsigned int i = 0; i < compiler_count; i++) {
+  for (unsigned int i = 0; i < compiler_info_count; i++) {
     printf("Found '%s'\n", compiler_infos[i].path);
   }
 
@@ -272,7 +276,7 @@ int main(int argc, char* argv[]) {
   free_opened_file();
   g_object_unref(app);
   free_compiler_strings();
-  free_compiler_array(compiler_infos, compiler_count);
+  free_compiler_array(compiler_infos, compiler_info_count);
 
   return result;
 }
