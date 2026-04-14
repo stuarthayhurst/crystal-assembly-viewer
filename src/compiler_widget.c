@@ -49,6 +49,21 @@ char* get_user_compiler_arguments(GtkWidget* compiler_widget) {
   return strdup(buffer_data);
 }
 
+/*
+ - Display a string in the compiler widget
+ - Must be freed by the caller
+*/
+void display_compiler_widget_text_content(GtkWidget* compiler_widget, const char* text) {
+  //Fetch the text view
+  GtkWidget* frame = gtk_widget_get_last_child(compiler_widget);
+  GtkWidget* scrolled_window = gtk_frame_get_child(GTK_FRAME(frame));
+  GtkWidget* text_view = gtk_scrolled_window_get_child(GTK_SCROLLED_WINDOW(scrolled_window));
+
+  //Set the text buffer
+  GtkTextBuffer* text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+  gtk_text_buffer_set_text(text_buffer, text, -1);
+}
+
 GtkWidget* create_compiler_widget() {
   //Vertical box for the config and output
   GtkWidget* vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
@@ -80,9 +95,13 @@ GtkWidget* create_compiler_widget() {
   gtk_widget_set_margin_end(text_frame, 4);
   gtk_widget_set_margin_bottom(text_frame, 4);
 
-  //Add a read-only text area to the frame
+  //Add a scrolled window to the frame
+  GtkWidget* scrolled_window = gtk_scrolled_window_new();
+  gtk_frame_set_child(GTK_FRAME(text_frame), scrolled_window);
+
+  //Add a read-only text area to the scrolled window
   GtkWidget* text_view = gtk_text_view_new();
-  gtk_frame_set_child(GTK_FRAME(text_frame), text_view);
+  gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), text_view);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), false);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), false);
 

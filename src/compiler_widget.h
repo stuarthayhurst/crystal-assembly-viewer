@@ -11,6 +11,8 @@ void free_compiler_strings();
 int get_compiler_index(GtkWidget* compiler_widget);
 char* get_user_compiler_arguments(GtkWidget* compiler_widget);
 
+void display_compiler_widget_text_content(GtkWidget* compiler_widget, const char* text);
+
 GtkWidget* create_compiler_widget();
 void set_compiler_widget_compiling(GtkWidget* compiler_widget, bool compiling);
 
