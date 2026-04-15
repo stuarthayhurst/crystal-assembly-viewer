@@ -100,7 +100,9 @@ static void compile_start() {
     char* user_compiler_arguments = get_user_compiler_arguments(compiler_widgets[i]);
 
     //Compile the file
-    char* compiler_output = run_compiler(compiler_infos, index, user_compiler_arguments, input_path);
+    bool success = false;
+    char* compiler_output = run_compiler(compiler_infos, index, user_compiler_arguments,
+                                         input_path, &success);
     if (compiler_output != NULL) {
       replace_compiler_widget_text(i, compiler_output);
     }

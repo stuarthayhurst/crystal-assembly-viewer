@@ -254,7 +254,7 @@ static char* read_stdpipe(int pipe, const char* pipe_name) {
  - Returns a string of the assembly to be displayed, or any error output
 */
 char* run_compiler(const struct compiler_info* compiler_infos, unsigned int compiler_index,
-                   const char* user_arguments, const char* source_path) {
+                   const char* user_arguments, const char* source_path, bool* success) {
   //Fetch compiler information and arguments
   const struct compiler_info* info = &compiler_infos[compiler_index];
   char* source_path_copy = strdup(source_path);
@@ -262,6 +262,7 @@ char* run_compiler(const struct compiler_info* compiler_infos, unsigned int comp
   const unsigned int default_argument_count = get_default_argument_count(info->type);
   if (default_arguments_array == NULL) {
     free(source_path_copy);
+    *success = false;
     return NULL;
   }
 
@@ -353,5 +354,6 @@ char* run_compiler(const struct compiler_info* compiler_infos, unsigned int comp
   free(combined_arguments);
   free_argument_array(user_arguments_array, user_argument_count);
 
+  *success = (ran_compiler && compiled);
   return output;
 }
