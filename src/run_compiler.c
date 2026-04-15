@@ -290,12 +290,12 @@ char* run_compiler(const struct compiler_info* compiler_infos, unsigned int comp
 
   //Compile the source
   pid_t pid = fork();
-  bool ran_compiler = false;
+  bool forked = true;
   bool compiled = false;
   if (pid < 0) {
     //Failed to fork, warn about this
     fprintf(stderr, "Failed to fork (%d)\n", errno);
-    ran_compiler = false;
+    forked = false;
   } else if (pid == 0) {
     //Redirect stdout
     if (dup2(outPipe[1], STDOUT_FILENO) < 0) {
@@ -312,32 +312,27 @@ char* run_compiler(const struct compiler_info* compiler_infos, unsigned int comp
     //Run the chosen compiler with the processed arguments
     execv(info->path, combined_arguments);
     fprintf(stderr, "Failed to exec '%s' (%d)\n", info->path, errno);
-    _exit(2);
+    _exit(1);
   } else {
-    //Wait for the compiler to finish
+    //Wait for the compiler to finish and check its status
     int status = 0;
     waitpid(pid, &status, 0);
-    if (status == 0) {
-      //Compiler ran successfully
-      ran_compiler = true;
-      compiled = true;
-    } else if (status == 1) {
-      //Compiler didn't run
-      ran_compiler = false;
-      compiled = false;
-    } else {
-      //Assume that the compiler ran but failed to compile
-      ran_compiler = true;
-      compiled = false;
-    }
+    compiled = (status == 0);
   }
 
   //Read the compiler's output
   char* output = NULL;
-  if (ran_compiler && !compiled) {
-    output = read_stdpipe(errPipe[0], "stderr");
-  } else if (ran_compiler && compiled) {
-    output = read_stdpipe(outPipe[0], "stdout");
+  if (forked) {
+    if (compiled) {
+      //Use the compiled output first, then any errors
+      output = read_stdpipe(outPipe[0], "stdout");
+      if (output[0] == '\0') {
+        free(output);
+        output = read_stdpipe(errPipe[0], "stderr");
+      }
+    } else {
+      output = read_stdpipe(errPipe[0], "stderr");
+    }
   }
 
   //Clean up the pipes
@@ -354,6 +349,6 @@ char* run_compiler(const struct compiler_info* compiler_infos, unsigned int comp
   free(combined_arguments);
   free_argument_array(user_arguments_array, user_argument_count);
 
-  *success = (ran_compiler && compiled);
+  *success = (compiled && forked);
   return output;
 }
