@@ -222,7 +222,7 @@ static char* read_stdpipe(int pipe, const char* pipe_name) {
   }
 
   //Read bytes and resize output until everything has been read
-  char* output = NULL;
+  char* output = malloc(1);
   unsigned int output_length = 0;
   while (true) {
     char buffer[4096];
