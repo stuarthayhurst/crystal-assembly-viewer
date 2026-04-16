@@ -10,6 +10,9 @@
 static const char default_output_text[] = "...";
 static const char default_arguments_text[] = "Compiler arguments, e.g. -O2";
 
+static const char compiler_arguments_tooltip[] = "Provide extra arguments to pass to the compiler";
+static const char compiler_selector_tooltip[] = "Select the compiler to use";
+
 static const char** compiler_paths = nullptr;
 static unsigned int compiler_count = 0;
 
@@ -78,6 +81,7 @@ GtkWidget* create_compiler_widget() {
   //Create a text entry for the compiler arguments
   GtkWidget* compiler_arguments = gtk_entry_new();
   gtk_entry_set_placeholder_text(GTK_ENTRY(compiler_arguments), default_arguments_text);
+  gtk_widget_set_tooltip_text(compiler_arguments, compiler_arguments_tooltip);
 
   //Put the entry in the horizontal box, and pad it
   gtk_box_append(GTK_BOX(hbox), compiler_arguments);
@@ -90,6 +94,7 @@ GtkWidget* create_compiler_widget() {
   gtk_box_append(GTK_BOX(hbox), compiler_selector);
   gtk_widget_set_margin_end(compiler_selector, 4);
   gtk_widget_set_margin_top(compiler_selector, 4);
+  gtk_widget_set_tooltip_text(compiler_selector, compiler_selector_tooltip);
 
   //Create a frame for the output
   GtkWidget* text_frame = gtk_frame_new(NULL);

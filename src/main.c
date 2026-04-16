@@ -18,6 +18,11 @@ static const char remove_pane_button_icon[] = "list-remove-symbolic";
 
 static const char file_label_text[] = "No file selected";
 
+static const char file_button_tooltip[] = "Open a file";
+static const char recompile_button_tooltip[] = "Recompile the selected file";
+static const char add_pane_button_tooltip[] = "Add a new compiler";
+static const char remove_pane_button_tooltip[] = "Remove last compiler";
+
 static const char app_name[] = "Crystal";
 static const char app_id[] = "io.github.stuarthayhurst.Crystal";
 
@@ -229,6 +234,7 @@ static void setup_content(GtkWidget* window) {
   file_button = gtk_button_new_from_icon_name(file_button_icon);
   g_signal_connect(file_button, "clicked", G_CALLBACK(file_button_clicked_callback), NULL);
   gtk_box_append(GTK_BOX(file_box), file_button);
+  gtk_widget_set_tooltip_text(file_button, file_button_tooltip);
 
   //Create a label for the open file
   file_label = gtk_label_new(file_label_text);
@@ -238,6 +244,7 @@ static void setup_content(GtkWidget* window) {
   recompile_button = gtk_button_new_from_icon_name(recompile_button_icon);
   g_signal_connect(recompile_button, "clicked", G_CALLBACK(recompile_button_clicked_callback), NULL);
   gtk_box_append(GTK_BOX(file_box), recompile_button);
+  gtk_widget_set_tooltip_text(recompile_button, recompile_button_tooltip);
 
   //Create an hbox for the panel boxes
   GtkWidget* panel_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
@@ -249,11 +256,13 @@ static void setup_content(GtkWidget* window) {
   add_pane_button = gtk_button_new_from_icon_name(add_pane_button_icon);
   g_signal_connect(add_pane_button, "clicked", G_CALLBACK(add_button_clicked_callback), NULL);
   gtk_box_append(GTK_BOX(button_box), add_pane_button);
+  gtk_widget_set_tooltip_text(add_pane_button, add_pane_button_tooltip);
 
   //Create the remove pane button
   remove_pane_button = gtk_button_new_from_icon_name(remove_pane_button_icon);
   g_signal_connect(remove_pane_button, "clicked", G_CALLBACK(remove_button_clicked_callback), NULL);
   gtk_box_append(GTK_BOX(button_box), remove_pane_button);
+  gtk_widget_set_tooltip_text(remove_pane_button, remove_pane_button_tooltip);
 
   //Create a frame for the panes
   paned_frame = gtk_frame_new(NULL);
