@@ -1,6 +1,3 @@
-#include <stdlib.h>
-#include <string.h>
-
 #include <adwaita.h>
 
 #include "panes.h"
