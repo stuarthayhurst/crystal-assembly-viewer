@@ -11,6 +11,16 @@
 
 #define MAX_NUM_PANES 4
 
+static const char file_button_icon[] = "document-open-symbolic";
+static const char recompile_button_icon[] = "view-refresh-symbolic";
+static const char add_pane_button_icon[] = "list-add-symbolic";
+static const char remove_pane_button_icon[] = "list-remove-symbolic";
+
+static const char file_label_text[] = "No file selected";
+
+static const char app_name[] = "Crystal";
+static const char app_id[] = "io.github.stuarthayhurst.Crystal";
+
 static GtkWidget* window;
 static GtkWidget* paned_frame;
 static GtkWidget* add_pane_button;
@@ -216,16 +226,16 @@ static void setup_content(GtkWidget* window) {
   gtk_box_set_spacing(GTK_BOX(file_box), 8);
 
   //Create a button to open a file
-  file_button = gtk_button_new_from_icon_name("document-open-symbolic");
+  file_button = gtk_button_new_from_icon_name(file_button_icon);
   g_signal_connect(file_button, "clicked", G_CALLBACK(file_button_clicked_callback), NULL);
   gtk_box_append(GTK_BOX(file_box), file_button);
 
   //Create a label for the open file
-  file_label = gtk_label_new("No file selected");
+  file_label = gtk_label_new(file_label_text);
   gtk_box_append(GTK_BOX(file_box), file_label);
 
   //Create a button to recompile
-  recompile_button = gtk_button_new_from_icon_name("view-refresh-symbolic");
+  recompile_button = gtk_button_new_from_icon_name(recompile_button_icon);
   g_signal_connect(recompile_button, "clicked", G_CALLBACK(recompile_button_clicked_callback), NULL);
   gtk_box_append(GTK_BOX(file_box), recompile_button);
 
@@ -236,12 +246,12 @@ static void setup_content(GtkWidget* window) {
   gtk_box_append(GTK_BOX(panel_box), button_box);
 
   //Create the add pane button
-  add_pane_button = gtk_button_new_from_icon_name("list-add-symbolic");
+  add_pane_button = gtk_button_new_from_icon_name(add_pane_button_icon);
   g_signal_connect(add_pane_button, "clicked", G_CALLBACK(add_button_clicked_callback), NULL);
   gtk_box_append(GTK_BOX(button_box), add_pane_button);
 
   //Create the remove pane button
-  remove_pane_button = gtk_button_new_from_icon_name("list-remove-symbolic");
+  remove_pane_button = gtk_button_new_from_icon_name(remove_pane_button_icon);
   g_signal_connect(remove_pane_button, "clicked", G_CALLBACK(remove_button_clicked_callback), NULL);
   gtk_box_append(GTK_BOX(button_box), remove_pane_button);
 
@@ -262,7 +272,7 @@ static void setup_content(GtkWidget* window) {
 static void activate_callback(GtkApplication* app) {
   window = gtk_application_window_new(app);
 
-  gtk_window_set_title(GTK_WINDOW(window), "Crystal");
+  gtk_window_set_title(GTK_WINDOW(window), app_name);
   gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
   gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 
@@ -289,7 +299,7 @@ int main(int argc, char* argv[]) {
     printf("Found '%s'\n", compiler_infos[i].path);
   }
 
-  app = adw_application_new("io.github.stuarthayhurst.Crystal", G_APPLICATION_DEFAULT_FLAGS);
+  app = adw_application_new(app_id, G_APPLICATION_DEFAULT_FLAGS);
   g_signal_connect(app, "activate", G_CALLBACK(activate_callback), NULL);
   int result = g_application_run(G_APPLICATION(app), argc, argv);
 

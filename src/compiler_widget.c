@@ -7,6 +7,9 @@
 
 #include "detect_compilers.h"
 
+static const char default_output_text[] = "...";
+static const char default_arguments_text[] = "Compiler arguments, e.g. -O2";
+
 static const char** compiler_paths = nullptr;
 static unsigned int compiler_count = 0;
 
@@ -74,7 +77,7 @@ GtkWidget* create_compiler_widget() {
 
   //Create a text entry for the compiler arguments
   GtkWidget* compiler_arguments = gtk_entry_new();
-  gtk_entry_set_placeholder_text(GTK_ENTRY(compiler_arguments), "Compiler arguments, e.g. -O2");
+  gtk_entry_set_placeholder_text(GTK_ENTRY(compiler_arguments), default_arguments_text);
 
   //Put the entry in the horizontal box, and pad it
   gtk_box_append(GTK_BOX(hbox), compiler_arguments);
@@ -112,7 +115,7 @@ GtkWidget* create_compiler_widget() {
 
   //Set the text buffer to a placeholder
   GtkTextBuffer* text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
-  gtk_text_buffer_set_text(text_buffer, "...", -1);
+  gtk_text_buffer_set_text(text_buffer, default_output_text, -1);
 
   return vbox;
 }
