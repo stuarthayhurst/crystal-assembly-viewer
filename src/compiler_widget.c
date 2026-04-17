@@ -8,7 +8,7 @@
 
 #include "detect_compilers.h"
 
-static const char default_output_text[] = "...";
+static const char default_output_text[] = "No compiler output yet";
 static const char default_arguments_text[] = "Compiler arguments, e.g. -O2";
 
 static const char compiler_arguments_tooltip[] = "Provide extra arguments to pass to the compiler";
