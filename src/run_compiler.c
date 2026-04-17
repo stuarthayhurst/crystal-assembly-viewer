@@ -249,6 +249,22 @@ static char* read_stdpipe(int pipe, const char* pipe_name) {
   return output;
 }
 
+//Replace any newlines at the end of the string with terminators, in reverse order
+static void suppress_newlines(char* string) {
+  if (string == NULL) {
+    return;
+  }
+
+  int length = strlen(string);
+  for (int i = length - 1; i >= 0; i--) {
+    if (string[i] == '\n') {
+      string[i] = '\0';
+    } else {
+      break;
+    }
+  }
+}
+
 /*
  - Compile source_path with the specified compiler and provided user arguments
  - Returns a string of the assembly to be displayed, or any error output
@@ -350,5 +366,6 @@ char* run_compiler(const struct compiler_info* compiler_infos, unsigned int comp
   free_argument_array(user_arguments_array, user_argument_count);
 
   *success = (compiled && forked);
+  suppress_newlines(output);
   return output;
 }
