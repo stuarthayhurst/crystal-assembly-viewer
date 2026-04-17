@@ -130,12 +130,15 @@ GtkWidget* create_compiler_widget() {
   GtkWidget* scrolled_window = gtk_scrolled_window_new();
   gtk_frame_set_child(GTK_FRAME(text_frame), scrolled_window);
 
-  //Add a read-only monospace text area to the scrolled window
+  //Add a source view to the scrolled window
   GtkWidget* text_view = gtk_source_view_new();
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), text_view);
+
+  //Configure the text properties for assembly code
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), false);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), false);
   gtk_text_view_set_monospace(GTK_TEXT_VIEW(text_view), true);
+  gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(text_view), true);
 
   //Fill the area with the text box
   gtk_widget_set_hexpand(text_view, TRUE);
