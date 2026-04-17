@@ -141,6 +141,7 @@ GtkWidget* create_compiler_widget() {
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), false);
   gtk_text_view_set_monospace(GTK_TEXT_VIEW(text_view), true);
   gtk_source_view_set_show_line_numbers(GTK_SOURCE_VIEW(text_view), true);
+  gtk_source_view_set_highlight_current_line(GTK_SOURCE_VIEW(text_view), true);
 
   //Fill the area with the text box
   gtk_widget_set_hexpand(text_view, TRUE);
