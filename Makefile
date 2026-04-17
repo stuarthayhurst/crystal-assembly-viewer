@@ -8,7 +8,7 @@ OBJECT_DIR = $(BUILD_DIR)/objects
 OBJECTS = $(subst ./src,$(OBJECT_DIR),$(subst .c,.o,$(OBJECTS_SOURCE)))
 
 #Global arguments
-CFLAGS += -Wall -Wextra -Werror -Wpedantic -flto=auto -std=c23
+CFLAGS += -Wall -Wextra -Werror -Wpedantic -flto=auto -std=gnu23
 
 #Debug arguments
 ifeq ($(DEBUG),true)

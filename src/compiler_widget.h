@@ -17,4 +17,6 @@ GtkWidget* create_compiler_widget();
 void set_compiler_widget_compiling(GtkWidget* compiler_widget, bool compiling);
 void set_compiler_widget_dark(GtkWidget* compiler_widget, bool dark);
 
+void append_language_path(const char* path);
+
 #endif

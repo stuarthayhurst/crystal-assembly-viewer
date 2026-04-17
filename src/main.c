@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <unistd.h>
+
 #include <adwaita.h>
 
 #include "compiler_widget.h"
@@ -37,12 +39,59 @@ static GtkWidget* recompile_button;
 static unsigned int num_panes = 0;
 static bool compiling = false;
 static GFile* opened_file = NULL;
+static char* binary_path = NULL;
 
 static GtkWidget* compiler_widgets[MAX_NUM_PANES];
 static char* compiler_widget_strings[MAX_NUM_PANES];
 static struct compiler_info* compiler_infos;
 
 static void set_pane_button_sensitivity();
+
+//Return the base path of the binary, must be freed by the caller
+static char* detect_binary_path() {
+  int buffer_size = sizeof(char) * 256;
+  char* binary_path = NULL;
+
+  //Fetch the path to the binary
+  while (true) {
+    binary_path = realloc(binary_path, buffer_size);
+
+    int count = readlink("/proc/self/exe", binary_path, buffer_size);
+    if (count < 0) {
+      fprintf(stderr, "Failed to determine binary path (%d)\n", errno);
+
+      free(binary_path);
+      return NULL;
+    } else if (count == buffer_size) {
+      //Didn't allocate enough space, try again
+      buffer_size *= 2;
+      break;
+    }
+
+    binary_path[count] = '\0';
+    break;
+  }
+
+  //Find the base path's length
+  const int length = strlen(binary_path);
+  int base_length = length;
+  for (int i = length - 1; i >= 0; i--) {
+    if (binary_path[i] != '/') {
+      base_length--;
+    } else {
+      break;
+    }
+  }
+
+  //Copy the base path and return it
+  char* base_binary_path = strndup(binary_path, base_length);
+  free(binary_path);
+  return base_binary_path;
+}
+
+static void free_binary_path(char* binary_path) {
+  free(binary_path);
+}
 
 static void update_text_dark_mode(AdwStyleManager* style_manager) {
   for (unsigned int i = 0; i < num_panes; i++) {
@@ -292,6 +341,7 @@ static void activate_callback(GtkApplication* app) {
   gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
   gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 
+  append_language_path(binary_path);
   setup_content(window);
 
   //Sync the text view's style
@@ -303,7 +353,9 @@ static void activate_callback(GtkApplication* app) {
 
 int main(int argc, char* argv[]) {
   AdwApplication* app;
+  binary_path = detect_binary_path();
 
+  //Initialise the widgets and strings
   for (unsigned int i = 0; i < MAX_NUM_PANES; i++) {
     compiler_widgets[i] = NULL;
     compiler_widget_strings[i] = NULL;
@@ -332,6 +384,7 @@ int main(int argc, char* argv[]) {
 
   free_compiler_strings();
   free_compiler_array(compiler_infos, compiler_info_count);
+  free_binary_path(binary_path);
 
   return result;
 }

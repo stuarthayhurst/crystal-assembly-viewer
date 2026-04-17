@@ -147,8 +147,14 @@ GtkWidget* create_compiler_widget() {
   gtk_widget_set_hexpand(text_view, TRUE);
   gtk_widget_set_vexpand(text_view, TRUE);
 
-  //Set the text buffer to a placeholder
+  //Set the syntax highlighting with a custom assembly language
   GtkTextBuffer* text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+  GtkSourceLanguageManager* language_manager = gtk_source_language_manager_get_default();
+  GtkSourceLanguage* language = gtk_source_language_manager_get_language(language_manager,
+                                                                         "assembler");
+  gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(text_buffer), language);
+
+  //Set the text buffer to a placeholder
   gtk_text_buffer_set_text(GTK_TEXT_BUFFER(text_buffer), default_output_text, -1);
 
   return vbox;
@@ -161,4 +167,9 @@ void set_compiler_widget_compiling(GtkWidget* compiler_widget, bool compiling) {
 void set_compiler_widget_dark(GtkWidget* compiler_widget, bool dark) {
   GtkTextView* text_view = get_text_view_from_widget(compiler_widget);
   set_text_view_style(text_view, dark);
+}
+
+void append_language_path(const char* path) {
+  GtkSourceLanguageManager* language_manager = gtk_source_language_manager_get_default();
+  gtk_source_language_manager_append_search_path(language_manager, path);
 }
