@@ -133,6 +133,8 @@ GtkWidget* create_compiler_widget() {
   //Add a source view to the scrolled window
   GtkWidget* text_view = gtk_source_view_new();
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), text_view);
+  gtk_text_view_set_top_margin(GTK_TEXT_VIEW(text_view), 2);
+  gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW(text_view), 2);
 
   //Configure the text properties for assembly code
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), false);
