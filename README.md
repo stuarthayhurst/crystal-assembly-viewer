@@ -19,6 +19,7 @@
   - Package names are correct for Debian, other distros may vary
   - `make`
   - `libadwaita-1-dev`
+  - `libgtksourceview-5-dev`
   - A C23 compatible compiler
 
 ## Licence:

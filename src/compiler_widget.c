@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include <adwaita.h>
+#include <gtksourceview/gtksource.h>
 
 #include "compiler_widget.h"
 
@@ -13,8 +14,33 @@ static const char default_arguments_text[] = "Compiler arguments, e.g. -O2";
 static const char compiler_arguments_tooltip[] = "Provide extra arguments to pass to the compiler";
 static const char compiler_selector_tooltip[] = "Select the compiler to use";
 
+static const char dark_style_name[] = "Adwaita-dark";
+static const char light_style_name[] = "Adwaita";
+
 static const char** compiler_paths = nullptr;
 static unsigned int compiler_count = 0;
+
+//Set a text view to the correct style for the current dark / light mode
+static void set_text_view_style(GtkTextView* text_view, bool dark_theme) {
+  GtkSourceStyleSchemeManager* style_manager = gtk_source_style_scheme_manager_get_default();
+
+  const char* style_name = dark_theme ? dark_style_name : light_style_name;
+
+  GtkSourceStyleScheme* style_scheme = \
+    gtk_source_style_scheme_manager_get_scheme(style_manager, style_name);
+
+  GtkTextBuffer* text_buffer = gtk_text_view_get_buffer(text_view);
+  gtk_source_buffer_set_style_scheme(GTK_SOURCE_BUFFER(text_buffer), style_scheme);
+}
+
+//Return the GtkTextView within a compiler widget
+static GtkTextView* get_text_view_from_widget(GtkWidget* compiler_widget) {
+  GtkWidget* frame = gtk_widget_get_last_child(compiler_widget);
+  GtkWidget* scrolled_window = gtk_frame_get_child(GTK_FRAME(frame));
+  GtkWidget* text_view = gtk_scrolled_window_get_child(GTK_SCROLLED_WINDOW(scrolled_window));
+
+  return GTK_TEXT_VIEW(text_view);
+}
 
 void send_compiler_infos(const struct compiler_info* infos, unsigned int count) {
   compiler_count = count;
@@ -60,10 +86,7 @@ char* get_user_compiler_arguments(GtkWidget* compiler_widget) {
  - Must be freed by the caller
 */
 void display_compiler_widget_text_content(GtkWidget* compiler_widget, const char* text) {
-  //Fetch the text view
-  GtkWidget* frame = gtk_widget_get_last_child(compiler_widget);
-  GtkWidget* scrolled_window = gtk_frame_get_child(GTK_FRAME(frame));
-  GtkWidget* text_view = gtk_scrolled_window_get_child(GTK_SCROLLED_WINDOW(scrolled_window));
+  GtkTextView* text_view = get_text_view_from_widget(compiler_widget);
 
   //Set the text buffer
   GtkTextBuffer* text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
@@ -108,7 +131,7 @@ GtkWidget* create_compiler_widget() {
   gtk_frame_set_child(GTK_FRAME(text_frame), scrolled_window);
 
   //Add a read-only monospace text area to the scrolled window
-  GtkWidget* text_view = gtk_text_view_new();
+  GtkWidget* text_view = gtk_source_view_new();
   gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolled_window), text_view);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), false);
   gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), false);
@@ -120,11 +143,16 @@ GtkWidget* create_compiler_widget() {
 
   //Set the text buffer to a placeholder
   GtkTextBuffer* text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
-  gtk_text_buffer_set_text(text_buffer, default_output_text, -1);
+  gtk_text_buffer_set_text(GTK_TEXT_BUFFER(text_buffer), default_output_text, -1);
 
   return vbox;
 }
 
 void set_compiler_widget_compiling(GtkWidget* compiler_widget, bool compiling) {
   gtk_widget_set_sensitive(compiler_widget, !compiling);
+}
+
+void set_compiler_widget_dark(GtkWidget* compiler_widget, bool dark) {
+  GtkTextView* text_view = get_text_view_from_widget(compiler_widget);
+  set_text_view_style(text_view, dark);
 }

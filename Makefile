@@ -17,8 +17,8 @@ ifeq ($(DEBUG),true)
 endif
 
 #Dependency arguments
-CFLAGS += $(shell pkg-config --cflags libadwaita-1)
-LDFLAGS += $(shell pkg-config --libs libadwaita-1)
+CFLAGS += $(shell pkg-config --cflags libadwaita-1 gtksourceview-5)
+LDFLAGS += $(shell pkg-config --libs libadwaita-1 gtksourceview-5)
 
 $(BUILD_DIR)/crystal: $(OBJECTS)
 	@mkdir -p "$(BUILD_DIR)"

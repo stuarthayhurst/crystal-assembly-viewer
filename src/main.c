@@ -44,11 +44,18 @@ static struct compiler_info* compiler_infos;
 
 static void set_pane_button_sensitivity();
 
+static void update_text_dark_mode(AdwStyleManager* style_manager) {
+  for (unsigned int i = 0; i < num_panes; i++) {
+    set_compiler_widget_dark(compiler_widgets[i], adw_style_manager_get_dark(style_manager));
+  }
+}
+
 static GtkWidget* add_compiler_widget() {
   num_panes++;
 
-  //Create and return a new widgets
+  //Create and return a new widget
   compiler_widgets[num_panes - 1] = create_compiler_widget();
+  update_text_dark_mode(adw_style_manager_get_default());
   return compiler_widgets[num_panes - 1];
 }
 
@@ -286,6 +293,10 @@ static void activate_callback(GtkApplication* app) {
   gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 
   setup_content(window);
+
+  //Sync the text view's style
+  AdwStyleManager* style_manager = adw_style_manager_get_default();
+  g_signal_connect(style_manager, "notify::dark", G_CALLBACK(update_text_dark_mode), NULL);
 
   gtk_window_present(GTK_WINDOW(window));
 }
