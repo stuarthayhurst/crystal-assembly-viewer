@@ -176,6 +176,7 @@ static void compile_start() {
                                          input_path, &success);
     if (compiler_output != NULL) {
       replace_compiler_widget_text(i, compiler_output);
+      set_compiler_widget_syntax_highlighting(compiler_widgets[i], success);
     }
 
     free(user_compiler_arguments);
