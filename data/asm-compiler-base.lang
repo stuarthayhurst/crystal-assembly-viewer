@@ -44,7 +44,7 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 					<end>\]</end>
 				</context>
 				<context id="operator" style-ref="operator">
-					<match>[-,:\+\*\/\(\)\{\}\[]|]</match>
+					<match>[\-\.\,\:\+\*\/\(\)\{\}\[\]\|\%\?\$\=]</match>
 				</context>
 				<context id="string" style-ref="string">
 					<start>&quot;</start>
@@ -57,24 +57,7 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 				<context id="escape" style-ref="escaped-character">
 					<match>\\.</match>
   				</context>
-				<context id="decimal" style-ref="decimal">
-					<match>\b([1-9][0-9]*|0)([Uu]([Ll]|LL|ll)?|([Ll]|LL|ll)[Uu]?)?\b</match>
-				</context>
-				<context id="float" style-ref="decimal">
-					<match>\b([0-9]+[Ee][-]?[0-9]+|([0-9]*\.[0-9]+|[0-9]+\.)([Ee][-]?[0-9]+)?)[fFlL]?</match>
-				</context>
-				<context id="hex" style-ref="decimal">
-					<match>\b0[xX][0-9a-fA-F]+([Uu]([Ll]|LL|ll)?|([Ll]|LL|ll)[Uu]?)?\b</match>
-				</context>
-				<context id="local-label" style-ref="preprocessor">
-					<match>\.[A-Za-z_0-9\.]*</match>
-				</context>
-				<context id="label" style-ref="preprocessor">
-					<match>^[A-Za-z_][A-Za-z_0-9]*</match>
-				</context>
-				<context id="dot" style-ref="operator">
-					<match>\.</match>
-				</context>
+
 				<context id="commands" style-ref="preprocessor">
 					<keyword>format</keyword>
 		    			<keyword>as</keyword>
@@ -116,6 +99,7 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 		    			<keyword>dword</keyword>
 		    			<keyword>qword</keyword>
 				</context>
+
 				<context id="registers" style-ref="type">
 					<!-- Intel segment -->
 					<keyword>cs</keyword>
@@ -154,6 +138,23 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 				</context>
 				<context id="registers-avx" style-ref="type">
 					<match>\b(?i)(x|y|z)mm([0-9]|[1-2][0-9]|3[0-1])(?-i)\b</match>
+				</context>
+
+				<context id="instructions" style-ref="keyword">
+				  <!-- Generated section -->
+				</context>
+
+				<context id="label" style-ref="preprocessor">
+					<match>(\.|[A-Za-z_])[\.(\w+)]*</match>
+				</context>
+				<context id="decimal" style-ref="decimal">
+					<match>\b([1-9][0-9]*|0)([Uu]([Ll]|LL|ll)?|([Ll]|LL|ll)[Uu]?)?\b</match>
+				</context>
+				<context id="float" style-ref="decimal">
+					<match>\b([0-9]+[Ee][-]?[0-9]+|([0-9]*\.[0-9]+|[0-9]+\.)([Ee][-]?[0-9]+)?)[fFlL]?</match>
+				</context>
+				<context id="hex" style-ref="decimal">
+					<match>\b0[xX][0-9a-fA-F]+([Uu]([Ll]|LL|ll)?|([Ll]|LL|ll)[Uu]?)?\b</match>
 				</context>
 			</include>
 		</context>

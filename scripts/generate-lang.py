@@ -5,16 +5,15 @@ import xml.etree.ElementTree as ElementTree
 
 import definitions
 
-def appendContextTag(element, idValue, styleRefValue):
-  newElement = ElementTree.SubElement(element, "context")
-  newElement.set("id", idValue)
-  newElement.set("style-ref", styleRefValue)
-
-  return newElement
-
 def appendKeywordTag(element, keyword):
   newElement = ElementTree.SubElement(element, "keyword")
   newElement.text = keyword
+
+def findInstructionsTag(tree):
+  elements = tree.findall(".//context");
+  for element in elements:
+    if element.get("id") == "instructions":
+      return element
 
 #Take the base input, the header input and output path
 if (len(sys.argv) < 4):
@@ -25,12 +24,9 @@ inputFile = sys.argv[1]
 headerFile = sys.argv[2]
 outputFile = sys.argv[3]
 
-#Parse the template and find the element to modify
+#Parse the template and find the instructions tag to modify
 languageTree = ElementTree.parse(inputFile)
-includeElement = languageTree.find(".//include");
-
-#Create tags for the instructions and registers
-instructionsTag = appendContextTag(includeElement, "instructions", "keyword")
+instructionsTag = findInstructionsTag(languageTree)
 
 #Append the instructions
 for instructionGroup in definitions.instructionGroups:
