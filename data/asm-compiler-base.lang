@@ -141,6 +141,7 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 				</context>
 
 				<context id="instructions" style-ref="keyword">
+				  <suffix>(l|q|b|)(\s|\z)</suffix>
 				  <!-- Generated section -->
 				</context>
 
