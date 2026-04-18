@@ -46,7 +46,7 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 					<end>\]</end>
 				</context>
 				<context id="operator" style-ref="operator">
-					<match>[\-\.\,\:\+\*\/\(\)\{\}\[\]\|\%\?\$\=]</match>
+					<match>[\-\,\:\+\*\/\(\)\{\}\[\]\|\%\?\$\=]</match>
 				</context>
 				<context id="string" style-ref="string">
 					<start>&quot;</start>
@@ -61,39 +61,157 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
   				</context>
 
 				<context id="data-sections" style-ref="section">
-					<match>(([pxlt]?)|((l|)(r|ro|)))data</match>
+					<match>\.(([pxlt]?)|((l|)(r|ro|)))data</match>
 				</context>
 				<context id="bss-sections" style-ref="section">
-					<match>(l|t)?bss</match>
+					<match>\.(l|t)?bss</match>
 				</context>
 				<context id="sections" style-ref="section">
+					<prefix>\.</prefix>
 					<keyword>code</keyword>
 					<keyword>text</keyword>
 					<keyword>section</keyword>
 				</context>
 
 				<context id="cfi-directive" style-ref="directive">
-					<match>cfi_([A-Za-z0-9_]*)</match>
+					<!-- From binutils documentation (loosely) -->
+					<match>\.cfi_([A-Za-z0-9_]*)</match>
 				</context>
 				<context id="addrsig-directive" style-ref="directive">
-					<match>addrsig((_([A-Za-z0-9_]*))?)</match>
+					<!-- Emitted by various compilers -->
+					<match>\.addrsig((_([A-Za-z0-9_]*))?)</match>
+				</context>
+				<context id="sized-directives" style-ref="directive">
+					<match>\.(dcb|dc|ds)(\.[abdlswx])?</match>
 				</context>
 				<context id="directives" style-ref="directive">
+					<prefix>\.</prefix>
+					<!-- From binutils documentation -->
+					<keyword>abort</keyword>
+					<keyword>align</keyword>
+					<keyword>altmacro</keyword>
+					<keyword>ascii</keyword>
+					<keyword>asciz</keyword>
+					<keyword>attach_to_group</keyword>
+					<keyword>balign</keyword>
+					<keyword>balignl</keyword>
+					<keyword>balignw</keyword>
+					<keyword>base64</keyword>
+					<keyword>bundle_align_mode</keyword>
+					<keyword>bundle_lock</keyword>
+					<keyword>bundle_unlock</keyword>
+					<keyword>byte</keyword>
+					<keyword>comm</keyword>
+					<keyword>def</keyword>
+					<keyword>desc_symbol</keyword>
+					<keyword>dim</keyword>
+					<keyword>double</keyword>
+					<keyword>eject</keyword>
+					<keyword>else</keyword>
+					<keyword>elseif</keyword>
+					<keyword>end</keyword>
+					<keyword>endef</keyword>
+					<keyword>endfunc</keyword>
+					<keyword>endif</keyword>
+					<keyword>equ</keyword>
+					<keyword>equiv</keyword>
+					<keyword>eqv</keyword>
+					<keyword>errif</keyword>
+					<keyword>error</keyword>
+					<keyword>exitm</keyword>
+					<keyword>extern</keyword>
+					<keyword>fail</keyword>
 					<keyword>file</keyword>
+					<keyword>fill</keyword>
+					<keyword>float</keyword>
+					<keyword>func</keyword>
+					<keyword>global</keyword>
+					<keyword>gnu_attribute</keyword>
+					<keyword>gnu_subsection</keyword>
+					<keyword>hidden</keyword>
+					<keyword>hword</keyword>
+					<keyword>ident</keyword>
+					<keyword>if</keyword>
+					<keyword>incbin</keyword>
+					<keyword>include</keyword>
+					<keyword>int</keyword>
+					<keyword>internal</keyword>
+					<keyword>irp</keyword>
+					<keyword>irpc</keyword>
+					<keyword>lcomm</keyword>
+					<keyword>lflags</keyword>
+					<keyword>linkonce</keyword>
+					<keyword>list</keyword>
+					<keyword>ln</keyword>
+					<keyword>loc</keyword>
+					<keyword>loc_mark</keyword>
+					<keyword>local</keyword>
+					<keyword>long</keyword>
+					<keyword>macro</keyword>
+					<keyword>mri</keyword>
+					<keyword>noaltmacro</keyword>
+					<keyword>nolist</keyword>
+					<keyword>nop</keyword>
+					<keyword>nops</keyword>
+					<keyword>octa</keyword>
+					<keyword>offset</keyword>
+					<keyword>org</keyword>
+					<keyword>p2align</keyword>
+					<keyword>popsection</keyword>
+					<keyword>previous</keyword>
+					<keyword>print</keyword>
+					<keyword>protected</keyword>
+					<keyword>psize</keyword>
+					<keyword>purgem</keyword>
+					<keyword>pushsection</keyword>
+					<keyword>quad</keyword>
+					<keyword>reloc</keyword>
+					<keyword>rept</keyword>
+					<keyword>sbttl</keyword>
+					<keyword>scl</keyword>
+					<keyword>section</keyword>
+					<keyword>set</keyword>
+					<keyword>short</keyword>
+					<keyword>single</keyword>
+					<keyword>size</keyword>
+					<keyword>skip</keyword>
+					<keyword>sleb128</keyword>
+					<keyword>space</keyword>
+					<keyword>stabd</keyword>
+					<keyword>string</keyword>
+					<keyword>struct</keyword>
+					<keyword>subsection</keyword>
+					<keyword>symver</keyword>
+					<keyword>tag</keyword>
+					<keyword>text</keyword>
+					<keyword>title</keyword>
+					<keyword>tls_common</keyword>
+					<keyword>type</keyword>
+					<keyword>uleb128</keyword>
+					<keyword>val</keyword>
+					<keyword>version</keyword>
+					<keyword>vtable_entry</keyword>
+					<keyword>vtable_inherit</keyword>
+					<keyword>warnif</keyword>
+					<keyword>warning</keyword>
+					<keyword>weak</keyword>
+					<keyword>weakref</keyword>
+					<keyword>word</keyword>
+					<keyword>zero</keyword>
+					<keyword>2byte</keyword>
+					<keyword>4byte</keyword>
+					<keyword>8byte</keyword>
+
+					<!-- Deprecated from binutils -->
+					<keyword>abort</keyword>
+					<keyword>line</keyword>
+
+					<!-- Emitted by various compilers -->
 					<keyword>comment</keyword>
 					<keyword>note</keyword>
 					<keyword>other</keyword>
-					<keyword>type</keyword>
-					<keyword>size</keyword>
 					<keyword>globl</keyword>
 					<keyword>ident</keyword>
-					<keyword>string</keyword>
-					<keyword>asciz</keyword>
-					<keyword>quad</keyword>
-					<keyword>long</keyword>
-					<keyword>zero</keyword>
-					<keyword>align</keyword>
-					<keyword>p2align</keyword>
 					<keyword>init_array</keyword>
 					<keyword>fini_array</keyword>
 				</context>
@@ -186,7 +304,7 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 				</context>
 
 				<context id="label" style-ref="preprocessor">
-					<match>(\.|[A-Za-z_])[\.(\w+)]*</match>
+					<match>(\.|[A-Za-z_])[\.A-Za-z0-9_]*</match>
 				</context>
 				<context id="decimal" style-ref="decimal">
 					<match>\b([1-9][0-9]*|0)([Uu]([Ll]|LL|ll)?|([Ll]|LL|ll)[Uu]?)?\b</match>
@@ -196,6 +314,9 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 				</context>
 				<context id="hex" style-ref="decimal">
 					<match>\b0[xX][0-9a-fA-F]+([Uu]([Ll]|LL|ll)?|([Ll]|LL|ll)[Uu]?)?\b</match>
+				</context>
+				<context id="dot" style-ref="operator">
+					<match>\.</match>
 				</context>
 			</include>
 		</context>
