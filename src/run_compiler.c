@@ -340,11 +340,14 @@ char* run_compiler(const struct compiler_info* compiler_infos, unsigned int comp
   char* output = NULL;
   if (forked) {
     if (compiled) {
-      //Use the compiled output first, then any errors
+      //Use the compiled output first
       output = read_stdpipe(outPipe[0], "stdout");
+
+      //If the compiled output was empty, fall back to failure
       if (output[0] == '\0') {
         free(output);
         output = read_stdpipe(errPipe[0], "stderr");
+        compiled = false;
       }
     } else {
       output = read_stdpipe(errPipe[0], "stderr");
