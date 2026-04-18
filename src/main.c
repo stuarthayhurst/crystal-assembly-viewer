@@ -38,7 +38,8 @@ static GtkWidget* recompile_button;
 
 static unsigned int num_panes = 0;
 static bool compiling = false;
-static GFile* opened_file = NULL;
+static char* opened_file_path = NULL;
+static char* opened_file_name = NULL;
 static char* binary_path = NULL;
 
 static GtkWidget* compiler_widgets[MAX_NUM_PANES];
@@ -152,7 +153,7 @@ static void compile_start() {
   }
 
   //Give up early if no file has been provided
-  if (opened_file == NULL) {
+  if (opened_file_path == NULL) {
     return;
   }
 
@@ -160,7 +161,6 @@ static void compile_start() {
   set_compiling(true);
 
   //Fetch information and run each compiler
-  char* input_path = g_file_get_path(opened_file);
   for (unsigned int i = 0; i < num_panes; i++) {
     int index = get_compiler_index(compiler_widgets[i]);
     if (index == -1) {
@@ -173,7 +173,7 @@ static void compile_start() {
     //Compile the file
     bool success = false;
     char* compiler_output = run_compiler(compiler_infos, index, user_compiler_arguments,
-                                         input_path, &success);
+                                         opened_file_path, &success);
     if (compiler_output != NULL) {
       replace_compiler_widget_text(i, compiler_output);
       set_compiler_widget_syntax_highlighting(compiler_widgets[i], success);
@@ -182,7 +182,6 @@ static void compile_start() {
     free(user_compiler_arguments);
   }
 
-  free(input_path);
   compile_done();
 }
 
@@ -227,37 +226,47 @@ static void remove_button_clicked_callback() {
   set_pane_button_sensitivity();
 }
 
-//Free the open file, if one is open
-static void free_opened_file() {
-  if (opened_file) {
-    g_object_unref(opened_file);
-    opened_file = NULL;
+//Free the open file path and name, if one has been selected
+static void free_opened_file_data() {
+  //Only free the path, since it contains the name
+  if (opened_file_path != NULL) {
+    free(opened_file_path);
+
+    opened_file_path = NULL;
+    opened_file_name = NULL;
   }
 }
 
-static void file_opened(GObject* source, GAsyncResult* result, void*) {
-  GFile* selected_file = gtk_file_dialog_open_finish(GTK_FILE_DIALOG(source), result, NULL);
-  if (!selected_file) {
-    return;
-  }
-
-  //Free any existing file and track the new one
-  free_opened_file();
-  opened_file = selected_file;
+//Track a file and trigger its first compile
+static void open_file(char* selected_file_path) {
+  //Free any existing file and track the new one, outside of GLib
+  free_opened_file_data();
+  opened_file_path = strdup(selected_file_path);
 
   //Set the file label to the file name
-  char* file_path = g_file_get_basename(opened_file);
-  gtk_label_set_text(GTK_LABEL(file_label), file_path);
-  g_free(file_path);
+  opened_file_name = strrchr(opened_file_path, '/') + 1;
+  gtk_label_set_text(GTK_LABEL(file_label), opened_file_name);
 
   //Initial compile
   compile_start();
 }
 
+static void file_chosen_callback(GObject* source, GAsyncResult* result, void*) {
+  GFile* selected_file = gtk_file_dialog_open_finish(GTK_FILE_DIALOG(source), result, NULL);
+  if (!selected_file) {
+    return;
+  }
+
+  //Track the new file
+  char* selected_file_path = g_file_get_path(selected_file);
+  open_file(selected_file_path);
+  g_free(selected_file_path);
+}
+
 static void file_button_clicked_callback() {
   //Open the file picker, hand off to file_opened when chosen
   GtkFileDialog* file_dialog = gtk_file_dialog_new();
-  gtk_file_dialog_open(file_dialog, GTK_WINDOW(window), NULL, file_opened, NULL);
+  gtk_file_dialog_open(file_dialog, GTK_WINDOW(window), NULL, file_chosen_callback, NULL);
 
   g_object_unref(file_dialog);
 }
@@ -376,7 +385,7 @@ int main(int argc, char* argv[]) {
   g_signal_connect(app, "activate", G_CALLBACK(activate_callback), NULL);
   int result = g_application_run(G_APPLICATION(app), argc, argv);
 
-  free_opened_file();
+  free_opened_file_data();
   g_object_unref(app);
 
   for (unsigned int i = 0; i < MAX_NUM_PANES; i++) {
