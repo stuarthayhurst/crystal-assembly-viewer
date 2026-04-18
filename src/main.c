@@ -394,7 +394,8 @@ int main(int argc, char* argv[]) {
     printf("Found '%s'\n", compiler_infos[i].path);
   }
 
-  app = adw_application_new(app_id, G_APPLICATION_DEFAULT_FLAGS | G_APPLICATION_HANDLES_OPEN);
+  app = adw_application_new(app_id, G_APPLICATION_DEFAULT_FLAGS | G_APPLICATION_HANDLES_OPEN | \
+                                    G_APPLICATION_NON_UNIQUE);
   g_signal_connect(app, "activate", G_CALLBACK(activate_callback), NULL);
   g_signal_connect(app, "open", G_CALLBACK(open_callback), NULL);
   int result = g_application_run(G_APPLICATION(app), argc, argv);
