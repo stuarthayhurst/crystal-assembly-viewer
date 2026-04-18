@@ -220,5 +220,10 @@ instructionGroups = [[
   ['pi2fd', 'pf2id', 'pfcmpge', 'pfcmpgt', 'pfcmpeq', 'pfacc', 'pfadd', 'pfsub',
   'pfsubr', 'pfmin', 'pfmax', 'pfmul', 'pfrcp', 'pfrsqrt', 'pfrcpit1', 'pfrcpit2',
   'pfrsqir1', 'pavgusb', 'pmulhrw', 'femms', 'prefetch', 'pf2iw', 'pi2fw', 'pfnacc',
-  'pfpnacc', 'pswapd', 'prefetchnta', 'prefetch0', 'prefetch1', 'prefetch2', 'pfrsqrtv', 'pfrcpv']
+  'pfpnacc', 'pswapd', 'prefetchnta', 'prefetch0', 'prefetch1', 'prefetch2', 'pfrsqrtv', 'pfrcpv'],
+
+  #GAS mnemonics (suffixes are handled by the base XML)
+  ['cbt', 'cwt', 'clt', 'cqt', 'movsbw', 'movsxb', 'movsbl', 'movsbq', 'movswl',
+  'movsxw', 'movswq', 'movslq', 'movsxl', 'movzbw', 'movzxb', 'movzx', 'movzbl',
+  'movzbq', 'movzwl', 'movzxw', 'movzwq', 'movabs']
 ]
