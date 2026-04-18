@@ -5,8 +5,8 @@
 
 instructionGroups = [[
   #Core instructions
-  'aaa', 'aad', 'aam', 'aas', 'adc', 'adcx', 'add', 'addpd', 'addps', 'addsd',
-  'addss', 'addsubpd', 'addsubps', 'adox', 'aesdec', 'aesdec128kl', 'aesdec256kl',
+  'aaa', 'aad', 'aadd', 'aand', 'aam', 'aas', 'adc', 'adcx', 'add', 'addpd', 'addps',
+  'addsd', 'addss', 'addsubpd', 'addsubps', 'adox', 'aesdec', 'aesdec128kl', 'aesdec256kl',
   'aesdeclast', 'aesdecwide128kl', 'aesdecwide256kl', 'aesenc', 'aesenc128kl',
   'aesenc256kl', 'aesenclast', 'aesencwide128kl', 'aesencwide256kl', 'aesimc',
   'aeskeygenassist', 'and', 'andn', 'andnpd', 'andnps', 'andpd', 'andps', 'arpl',
@@ -207,7 +207,16 @@ instructionGroups = [[
   'rmpread', 'rmpchkd', 'rmpopt'],
 
   #APX instructions
-  ['push2', 'pop2', 'pushp', 'popp', 'jmpabs'],
+  ['ccmpb', 'ccmpbe', 'ccmpf', 'ccmpl', 'ccmple', 'ccmpnb', 'ccmpnbe', 'ccmpnl',
+  'ccmpnle', 'ccmpno', 'ccmpns', 'ccmpnz', 'ccmpo', 'ccmps', 'ccmpt', 'ccmpz',
+  'cfcmovb', 'cfcmovbe', 'cfcmovl', 'cfcmovle', 'cfcmovnb', 'cfcmovnbe', 'cfcmovnl',
+  'cfcmovnle', 'cfcmovno', 'cfcmovnp', 'cfcmovns', 'cfcmovnz', 'cfcmovo', 'cfcmovp',
+  'cfcmovs', 'cfcmovz', 'cmpbexadd', 'cmpbxadd', 'cmplexadd', 'cmplxadd', 'cmpnbexadd',
+  'cmpnbxadd', 'cmpnlexadd', 'cmpnlxadd', 'cmpnoxadd', 'cmpnpxadd', 'cmpnsxadd',
+  'cmpnzxadd', 'cmpoxadd', 'cmppxadd', 'cmpsxadd', 'cmpzxadd', 'ctestb', 'ctestbe',
+  'ctestf', 'ctestl', 'ctestle', 'ctestnb', 'ctestnbe', 'ctestnl', 'ctestnle',
+  'ctestno', 'ctestns', 'ctestnz', 'ctesto', 'ctests', 'ctestt', 'ctests', 'push2',
+  'pop2', 'pushp', 'popp', 'jmpabs'],
 
   #3DNow! instructions
   ['pi2fd', 'pf2id', 'pfcmpge', 'pfcmpgt', 'pfcmpeq', 'pfacc', 'pfadd', 'pfsub',
