@@ -24,6 +24,8 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 		<style id="char" name="Character" map-to="def:character"/>
 		<style id="decimal" name="Data Type" map-to="def:decimal"/>
 		<style id="type" name="Data Type" map-to="def:type"/>
+		<style id="section" name="Section" map-to="def:keyword"/>
+		<style id="directive" name="Directive" map-to="def:keyword"/>
 	</styles>
 
 	<default-regex-options case-sensitive="false"/>
@@ -57,6 +59,44 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 				<context id="escape" style-ref="escaped-character">
 					<match>\\.</match>
   				</context>
+
+				<context id="data-sections" style-ref="section">
+					<match>(([pxlt]?)|((l|)(r|ro|)))data</match>
+				</context>
+				<context id="bss-sections" style-ref="section">
+					<match>(l|t)?bss</match>
+				</context>
+				<context id="sections" style-ref="section">
+					<keyword>code</keyword>
+					<keyword>text</keyword>
+					<keyword>section</keyword>
+				</context>
+
+				<context id="cfi-directive" style-ref="directive">
+					<match>cfi_([A-Za-z0-9_]*)</match>
+				</context>
+				<context id="addrsig-directive" style-ref="directive">
+					<match>addrsig((_([A-Za-z0-9_]*))?)</match>
+				</context>
+				<context id="directives" style-ref="directive">
+					<keyword>file</keyword>
+					<keyword>comment</keyword>
+					<keyword>note</keyword>
+					<keyword>other</keyword>
+					<keyword>type</keyword>
+					<keyword>size</keyword>
+					<keyword>globl</keyword>
+					<keyword>ident</keyword>
+					<keyword>string</keyword>
+					<keyword>asciz</keyword>
+					<keyword>quad</keyword>
+					<keyword>long</keyword>
+					<keyword>zero</keyword>
+					<keyword>align</keyword>
+					<keyword>p2align</keyword>
+					<keyword>init_array</keyword>
+					<keyword>fini_array</keyword>
+				</context>
 
 				<context id="commands" style-ref="preprocessor">
 					<keyword>format</keyword>
