@@ -24,13 +24,17 @@ $(BUILD_DIR)/crystal: $(OBJECTS)
 	@mkdir -p "$(BUILD_DIR)"
 	$(CC) -o "$(BUILD_DIR)/crystal" $(OBJECTS) $(CFLAGS) $(LDFLAGS)
 
+$(BUILD_DIR)/asm-compiler.lang: data/asm-compiler-base.lang data/asm-header.xml
+	@mkdir -p "$(BUILD_DIR)"
+	./scripts/generate-lang.py "data/asm-compiler-base.lang" "data/asm-header.xml" "$@"
+
 $(OBJECT_DIR)/%.o: ./src/%.c $(HEADERS_SOURCE)
 	@mkdir -p "$(OBJECT_DIR)"
 	$(CC) "$<" -c $(CFLAGS) -o "$@"
 
 .PHONY: build debug clean
 
-build: $(BUILD_DIR)/crystal
+build: $(BUILD_DIR)/crystal $(BUILD_DIR)/asm-compiler.lang
 
 debug:
 	@DEBUG="true" $(MAKE) --no-print-directory build

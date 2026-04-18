@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd">
+<!--Originally based on the language definition shared on: 
+https://wiki.gnome.org/Projects/GtkSourceView/LanguageDefinitions?action=AttachFile&do=view&target=asm-intel.lang
+-->
+<!-- Developed further from:
+https://gist.github.com/mrbesher/5c98da1c220d10e2aba8276554d3456c
+https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text-editor/custom/asm-intel.lang
+-->
+<!-- Sync everything above this line with asm-header.xml -->
+<language id="assembler" name="Assembler (Intel)" version="2.0" section="Sources">
+	<metadata>
+		<property name="mimetypes">text/x-asm;text/x-assembler</property>
+		<property name="globs">*.asm</property>
+	</metadata>
+
+	<styles>
+		<style id="preprocessor" name="Preprocessor" map-to="def:preprocessor"/>
+		<style id="keyword" name="Keyword" map-to="def:keyword"/>
+		<style id="comment" name="Comment" map-to="def:comment"/>
+		<style id="operator" name="Operator" map-to="def:operator"/>
+		<style id="string" name="String" map-to="def:string"/>
+		<style id="escaped-character" name="Escaped Character" map-to="def:special-char"/>
+		<style id="char" name="Character" map-to="def:character"/>
+		<style id="decimal" name="Data Type" map-to="def:decimal"/>
+		<style id="type" name="Data Type" map-to="def:type"/>
+	</styles>
+
+	<default-regex-options case-sensitive="false"/>
+
+	<definitions>
+		<context id="assembler">
+			<include>
+				<context id="comment" style-ref="comment">
+					<start>#|@|;</start>
+					<end>$</end>
+				</context>
+				<context id="comment-multiline" style-ref="comment">
+					<start>/\*</start>
+					<end>\*/</end>
+				</context>
+				<context id="nasm-id" style-ref="keyword">
+					<start>\[</start>
+					<end>\]</end>
+				</context>
+				<context id="operator" style-ref="operator">
+					<match>[-,:\+\*\/\(\)\{\}\[]|]</match>
+				</context>
+				<context id="string" style-ref="string">
+					<start>&quot;</start>
+					<end>&quot;</end>
+				</context>
+				<context id="character" style-ref="char">
+					<start>\'</start>
+					<end>\'</end>
+				</context>
+				<context id="escape" style-ref="escaped-character">
+					<match>\\.</match>
+  				</context>
+				<context id="decimal" style-ref="decimal">
+					<match>\b([1-9][0-9]*|0)([Uu]([Ll]|LL|ll)?|([Ll]|LL|ll)[Uu]?)?\b</match>
+				</context>
+				<context id="float" style-ref="decimal">
+					<match>\b([0-9]+[Ee][-]?[0-9]+|([0-9]*\.[0-9]+|[0-9]+\.)([Ee][-]?[0-9]+)?)[fFlL]?</match>
+				</context>
+				<context id="hex" style-ref="decimal">
+					<match>\b0[xX][0-9a-fA-F]+([Uu]([Ll]|LL|ll)?|([Ll]|LL|ll)[Uu]?)?\b</match>
+				</context>
+				<context id="local-label" style-ref="preprocessor">
+					<match>\.[A-Za-z_0-9\.]*</match>
+				</context>
+				<context id="label" style-ref="preprocessor">
+					<match>^[A-Za-z_][A-Za-z_0-9]*</match>
+				</context>
+				<context id="dot" style-ref="operator">
+					<match>\.</match>
+				</context>
+				<context id="commands" style-ref="preprocessor">
+					<keyword>format</keyword>
+		    			<keyword>as</keyword>
+		    			<keyword>use16</keyword>
+		    			<keyword>use32</keyword>
+		    			<keyword>use64</keyword>
+
+		    			<keyword>equ</keyword>
+		    			<keyword>times</keyword>
+		    			<keyword>if</keyword>
+		    			<keyword>repeat</keyword>
+		    			<keyword>while</keyword>
+		    			<keyword>end</keyword>
+		    			<keyword>break</keyword>
+
+		    			<keyword>display</keyword>
+		    			<keyword>err</keyword>
+
+		    			<keyword>include</keyword>
+		    			<keyword>macro</keyword>
+		    			<keyword>align</keyword>
+
+		    			<keyword>db</keyword>
+		    			<keyword>du</keyword>
+		    			<keyword>dw</keyword>
+		    			<keyword>dd</keyword>
+		    			<keyword>dq</keyword>
+
+		    			<keyword>rb</keyword>
+		    			<keyword>rw</keyword>
+		    			<keyword>rd</keyword>
+		    			<keyword>rq</keyword>
+					<keyword>short</keyword>
+		    			<keyword>near</keyword>
+		    			<keyword>far</keyword>
+
+		    			<keyword>byte</keyword>
+		    			<keyword>word</keyword>
+		    			<keyword>dword</keyword>
+		    			<keyword>qword</keyword>
+				</context>
+				<context id="registers" style-ref="type">
+					<!-- Intel segment -->
+					<keyword>cs</keyword>
+					<keyword>ds</keyword>
+					<keyword>ss</keyword>
+					<keyword>es</keyword>
+					<keyword>fs</keyword>
+					<keyword>gs</keyword>
+
+					<!-- Intel x87 -->
+					<keyword>st</keyword>
+				</context>
+				<context id="registers-general-new" style-ref="type">
+					<match>\b(?i)r([0-9]|1[0-5])(|d|w|b)(?-i)\b</match>
+				</context>
+				<context id="registers-general-old" style-ref="type">
+					<match>\b(?i)(r|e|)(ax|bx|cx|dx|si|di|sp|bp|ip)(?-i)\b</match>
+				</context>
+				<context id="registers-general-old-byte" style-ref="type">
+					<match>\b(?i)(a|b|c|d)(l|h)(?-i)\b</match>
+				</context>
+				<context id="registers-control" style-ref="type">
+					<match>\b(?i)cr([0-9]|1[0-5])(?-i)\b</match>
+				</context>
+				<context id="registers-debug" style-ref="type">
+					<match>\b(?i)db[0-7](?-i)\b</match>
+				</context>
+				<context id="registers-test" style-ref="type">
+					<match>\b(?i)tr[0-7](?-i)\b</match>
+				</context>
+				<context id="registers-fpu" style-ref="type">
+					<match>\b(?i)st[0-7](?-i)\b</match>
+				</context>
+				<context id="registers-sse" style-ref="type">
+					<match>\b(?i)mm[0-7](?-i)\b</match>
+				</context>
+				<context id="registers-avx" style-ref="type">
+					<match>\b(?i)(x|y|z)mm([0-9]|[1-2][0-9]|3[0-1])(?-i)\b</match>
+				</context>
+			</include>
+		</context>
+	</definitions>
+</language>
