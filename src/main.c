@@ -251,6 +251,12 @@ static void open_file(char* selected_file_path) {
   compile_start();
 }
 
+static void open_gfile(GFile* selected_file) {
+  char* selected_file_path = g_file_get_path(selected_file);
+  open_file(selected_file_path);
+  g_free(selected_file_path);
+}
+
 static void file_chosen_callback(GObject* source, GAsyncResult* result, void*) {
   GFile* selected_file = gtk_file_dialog_open_finish(GTK_FILE_DIALOG(source), result, NULL);
   if (!selected_file) {
@@ -258,9 +264,7 @@ static void file_chosen_callback(GObject* source, GAsyncResult* result, void*) {
   }
 
   //Track the new file
-  char* selected_file_path = g_file_get_path(selected_file);
-  open_file(selected_file_path);
-  g_free(selected_file_path);
+  open_gfile(selected_file);
 }
 
 static void file_button_clicked_callback() {
@@ -361,6 +365,15 @@ static void activate_callback(GtkApplication* app) {
   gtk_window_present(GTK_WINDOW(window));
 }
 
+static void open_callback(GtkApplication* app, gpointer files, gint file_count, gchar*, gpointer) {
+  activate_callback(app);
+
+  GFile** gfile_array = (GFile**)files;
+  if (file_count >= 1) {
+    open_gfile(gfile_array[0]);
+  }
+}
+
 int main(int argc, char* argv[]) {
   AdwApplication* app;
   binary_path = detect_binary_path();
@@ -381,8 +394,9 @@ int main(int argc, char* argv[]) {
     printf("Found '%s'\n", compiler_infos[i].path);
   }
 
-  app = adw_application_new(app_id, G_APPLICATION_DEFAULT_FLAGS);
+  app = adw_application_new(app_id, G_APPLICATION_DEFAULT_FLAGS | G_APPLICATION_HANDLES_OPEN);
   g_signal_connect(app, "activate", G_CALLBACK(activate_callback), NULL);
+  g_signal_connect(app, "open", G_CALLBACK(open_callback), NULL);
   int result = g_application_run(G_APPLICATION(app), argc, argv);
 
   free_opened_file_data();
