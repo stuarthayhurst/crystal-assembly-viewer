@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 #Extracted from https://www.felixcloutier.com/x86/
-#Added: TDX, AMD-V, APX
+#Added: TDX, AMD-V, APX, 3DNow!
 
 instructionGroups = [[
   #Core instructions
