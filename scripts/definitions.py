@@ -207,7 +207,7 @@ instructionGroups = [[
   'rmpread', 'rmpchkd', 'rmpopt'],
 
   #APX instructions
-  ['push2', 'pop2', 'jmpabs'],
+  ['push2', 'pop2', 'pushp', 'popp', 'jmpabs'],
 
   #3DNow! instructions
   ['pi2fd', 'pf2id', 'pfcmpge', 'pfcmpgt', 'pfcmpeq', 'pfacc', 'pfadd', 'pfsub',

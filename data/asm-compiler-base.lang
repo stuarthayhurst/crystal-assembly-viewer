@@ -153,7 +153,7 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 					<keyword>st</keyword>
 				</context>
 				<context id="registers-general-new" style-ref="type">
-					<match>\b(?i)r([0-9]|1[0-5])(|d|w|b)(?-i)\b</match>
+					<match>\b(?i)r([0-9]|[1-2][0-9]|3[0-1])(|d|w|b)(?-i)\b</match>
 				</context>
 				<context id="registers-general-old" style-ref="type">
 					<match>\b(?i)(r|e|)(ax|bx|cx|dx|si|di|sp|bp|ip)(?-i)\b</match>
