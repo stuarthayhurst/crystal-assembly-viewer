@@ -8,11 +8,15 @@
   - `make build`: Builds the program
     - Supports multiple threads with `-j[THREAD COUNT]`
     - Use `make -j$(nproc)` to build with all available threads
+  - `make install`: Installs the program
+  - `make uninstall`: Uninstalls the program
   - `make clean`: Cleans the build environment
   - `DEBUG=[true/false]`: Environment variable to enable debug support
     - Includes debug symbols, retains the frame pointer and enables sanitisers
     - `make debug` runs `make build` in debug mode
   - `BUILD_DIR`: Environment variable to configure built object output
+  - `PREFIX_DIR`: Environment variable to configure the installation prefix
+    - Defaults to `/usr/local`
 
 ## Usage:
   - `./build/crystal`

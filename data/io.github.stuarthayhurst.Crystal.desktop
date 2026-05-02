@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Crystal
+Comment=Inspect the assembly output from various compilers, locally
+Categories=Development;Profiling;
+Icon=io.github.stuarthayhurst.Crystal
+Exec=crystal
