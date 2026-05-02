@@ -41,6 +41,7 @@ static bool compiling = false;
 static char* opened_file_path = NULL;
 static char* opened_file_name = NULL;
 static char* binary_path = NULL;
+static char* application_path = NULL;
 
 static GtkWidget* compiler_widgets[MAX_NUM_PANES];
 static char* compiler_widget_strings[MAX_NUM_PANES];
@@ -91,7 +92,43 @@ static char* detect_binary_path() {
 }
 
 static void free_binary_path(char* binary_path) {
-  free(binary_path);
+  if (binary_path != NULL) {
+    free(binary_path);
+  }
+}
+
+static char* generate_application_path(char* binary_path) {
+  const unsigned int binary_path_length = strlen(binary_path);
+
+  //If the program is running in-place, just use the binary path
+  if (strstr(binary_path, "bin/") != binary_path + binary_path_length - 4) {
+    return strdup(binary_path);
+  }
+
+  /*
+   - Application data path length uses the binary path as a starting point
+   - Subtract 4 to remove "bin/"
+   - Add 6 to add "share/"
+   - Add 1 for the final "/"
+   - Add space for the ID
+  */
+  const unsigned int application_path_length = binary_path_length + 3 + strlen(app_id);
+  const unsigned int application_path_size = application_path_length + 1;
+
+  //Build the application path
+  char* application_path = calloc(application_path_size, sizeof(char));
+  strncat(application_path, binary_path, binary_path_length - 4);
+  strcat(application_path, "share/");
+  strcat(application_path, app_id);
+  strcat(application_path, "/");
+
+  return application_path;
+}
+
+static void free_application_path(char* application_path) {
+  if (application_path != NULL) {
+    free(application_path);
+  }
 }
 
 static void update_text_dark_mode(AdwStyleManager* style_manager) {
@@ -355,7 +392,7 @@ static void activate_callback(GtkApplication* app) {
   gtk_window_set_default_size(GTK_WINDOW(window), 1200, 800);
   gtk_window_set_resizable(GTK_WINDOW(window), TRUE);
 
-  append_language_path(binary_path);
+  append_language_path(application_path);
   setup_content(window);
 
   //Sync the text view's style
@@ -377,6 +414,7 @@ static void open_callback(GtkApplication* app, gpointer files, gint file_count, 
 int main(int argc, char* argv[]) {
   AdwApplication* app;
   binary_path = detect_binary_path();
+  application_path = generate_application_path(binary_path);
 
   //Initialise the widgets and strings
   for (unsigned int i = 0; i < MAX_NUM_PANES; i++) {
@@ -410,6 +448,7 @@ int main(int argc, char* argv[]) {
   free_compiler_strings();
   free_compiler_array(compiler_infos, compiler_info_count);
   free_binary_path(binary_path);
+  free_application_path(application_path);
 
   return result;
 }
