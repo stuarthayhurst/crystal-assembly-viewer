@@ -19,7 +19,7 @@ static const char light_style_name[] = "Adwaita";
 
 static const char css_frame_warning_class[] = "warning-border";
 
-static const char** compiler_paths = nullptr;
+static const char** compiler_paths = NULL;
 static unsigned int compiler_count = 0;
 
 //Set a text view to the correct style for the current dark / light mode
@@ -56,7 +56,9 @@ void send_compiler_infos(const struct compiler_info* infos, unsigned int count) 
 }
 
 void free_compiler_strings() {
-  free(compiler_paths);
+  if (compiler_paths != NULL) {
+    free(compiler_paths);
+  }
 }
 
 //Return the index of the selected compiler, or -1 if unselected
