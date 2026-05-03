@@ -25,6 +25,8 @@ static const char recompile_button_tooltip[] = "Recompile the selected file";
 static const char add_pane_button_tooltip[] = "Add a new compiler";
 static const char remove_pane_button_tooltip[] = "Remove last compiler";
 
+static const char frame_css_string[] = ".warning-border {border-color: #ba0404; border-width: 2px;}";
+
 static const char app_name[] = "Crystal";
 static const char app_id[] = "io.github.stuarthayhurst.Crystal";
 
@@ -35,6 +37,8 @@ static GtkWidget* remove_pane_button;
 static GtkWidget* file_button;
 static GtkWidget* file_label;
 static GtkWidget* recompile_button;
+
+static GtkCssProvider* frame_css_provider = NULL;
 
 static unsigned int num_panes = 0;
 static bool compiling = false;
@@ -214,6 +218,7 @@ static void compile_start() {
     if (compiler_output != NULL) {
       replace_compiler_widget_text(i, compiler_output);
       set_compiler_widget_syntax_highlighting(compiler_widgets[i], success);
+      set_compiler_widget_failed(compiler_widgets[i], !success);
     }
 
     free(user_compiler_arguments);
@@ -395,6 +400,15 @@ static void activate_callback(GtkApplication* app) {
   append_language_path(application_path);
   setup_content(window);
 
+  //Create a CSS provider
+  frame_css_provider = gtk_css_provider_new();
+  gtk_css_provider_load_from_string(frame_css_provider, frame_css_string);
+
+  //Add the CSS provider to the display
+  GdkDisplay* display = gtk_widget_get_display(GTK_WIDGET(window));
+  gtk_style_context_add_provider_for_display(display, GTK_STYLE_PROVIDER(frame_css_provider),
+                                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
   //Sync the text view's style
   AdwStyleManager* style_manager = adw_style_manager_get_default();
   g_signal_connect(style_manager, "notify::dark", G_CALLBACK(update_text_dark_mode), NULL);
@@ -437,6 +451,10 @@ int main(int argc, char* argv[]) {
   g_signal_connect(app, "activate", G_CALLBACK(activate_callback), NULL);
   g_signal_connect(app, "open", G_CALLBACK(open_callback), NULL);
   int result = g_application_run(G_APPLICATION(app), argc, argv);
+
+  if (frame_css_provider != NULL) {
+    g_object_unref(frame_css_provider);
+  }
 
   free_opened_file_data();
   g_object_unref(app);

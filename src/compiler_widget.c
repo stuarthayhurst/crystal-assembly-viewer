@@ -17,6 +17,8 @@ static const char compiler_selector_tooltip[] = "Select the compiler to use";
 static const char dark_style_name[] = "Adwaita-dark";
 static const char light_style_name[] = "Adwaita";
 
+static const char css_frame_warning_class[] = "warning-border";
+
 static const char** compiler_paths = nullptr;
 static unsigned int compiler_count = 0;
 
@@ -175,6 +177,16 @@ void set_compiler_widget_syntax_highlighting(GtkWidget* compiler_widget, bool sy
   GtkTextBuffer* text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
 
   gtk_source_buffer_set_highlight_syntax(GTK_SOURCE_BUFFER(text_buffer), syntax_highlighting);
+}
+
+void set_compiler_widget_failed(GtkWidget* compiler_widget, bool failed) {
+  GtkWidget* frame = gtk_widget_get_last_child(compiler_widget);
+
+  if (failed) {
+    gtk_widget_add_css_class(frame, css_frame_warning_class);
+  } else {
+    gtk_widget_remove_css_class(frame, css_frame_warning_class);
+  }
 }
 
 void append_language_path(const char* path) {
