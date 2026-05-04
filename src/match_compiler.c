@@ -24,15 +24,27 @@ struct compiler_match {
   const char* compiler_string;
   enum match_enum mode;
   enum compiler_type_enum type;
+  unsigned int priority;
 };
 
+/*
+ - Matching rules for various compilers
+ - Lower numbers have higher priorities
+ - Priorities:
+   - 0: Explicitly versioned compilers
+   - 1: Explicitly versioned compiler with long form / alternative names
+   - 2: Unversioned exact matches
+   - 3: Unversioned exact matches with long form / alternative names
+   - 4: Unknown compiler
+*/
+#define UNKNOWN_PRIORITY 4
 static struct compiler_match compiler_match_info[12] = {
-  {"gcc", EXACT_MATCH, GCC}, {"gcc-", REQUIRES_VERSION, GCC},
-  {"g++", EXACT_MATCH, GXX}, {"g++-", REQUIRES_VERSION, GXX},
-  {"-linux-gnu-gcc", SUFFIX_MATCH, GCC}, {"-linux-gnu-gcc-", ENDS_REQUIRES_VERSION, GCC},
-  {"-linux-gnu-g++", SUFFIX_MATCH, GXX}, {"-linux-gnu-gcc-", ENDS_REQUIRES_VERSION, GXX},
-  {"clang", EXACT_MATCH, CLANG}, {"clang-", REQUIRES_VERSION, CLANG},
-  {"clang++", EXACT_MATCH, CLANGXX}, {"clang++-", REQUIRES_VERSION, CLANGXX}
+  {"gcc", EXACT_MATCH, GCC, 2}, {"gcc-", REQUIRES_VERSION, GCC, 0},
+  {"g++", EXACT_MATCH, GXX, 2}, {"g++-", REQUIRES_VERSION, GXX, 0},
+  {"-linux-gnu-gcc", SUFFIX_MATCH, GCC, 3}, {"-linux-gnu-gcc-", ENDS_REQUIRES_VERSION, GCC, 1},
+  {"-linux-gnu-g++", SUFFIX_MATCH, GXX, 3}, {"-linux-gnu-g++-", ENDS_REQUIRES_VERSION, GXX, 1},
+  {"clang", EXACT_MATCH, CLANG, 2}, {"clang-", REQUIRES_VERSION, CLANG, 0},
+  {"clang++", EXACT_MATCH, CLANGXX, 3}, {"clang++-", REQUIRES_VERSION, CLANGXX, 1}
 };
 static const unsigned int compiler_match_count = \
   sizeof(compiler_match_info) / sizeof(struct compiler_match);
@@ -92,8 +104,9 @@ static bool zero_terminating_digits(char* string) {
 /*
  - Use matching rules in compiler_match_info to identify a compiler based on its path
  - Returns the enum for the compiler if identified, UNKNOWN_COMPILER otherwise
+   - Also returns the priority of the match
 */
-enum compiler_type_enum identify_compiler(const char* file_path) {
+struct compiler_match_data identify_compiler(const char* file_path) {
   //Extract the filename from the path
   const char* file_name = strrchr(file_path, '/') + 1;
 
@@ -137,9 +150,12 @@ enum compiler_type_enum identify_compiler(const char* file_path) {
 
     //Break when a match is found
     if (matched) {
-      return compiler_match_ptr->type;
+      struct compiler_match_data match_data = {compiler_match_ptr->type,
+                                               compiler_match_ptr->priority};
+      return match_data;
     }
   } 
 
-  return UNKNOWN_COMPILER;
+  struct compiler_match_data unknown_match_data = {UNKNOWN_COMPILER, UNKNOWN_PRIORITY};
+  return unknown_match_data;
 }

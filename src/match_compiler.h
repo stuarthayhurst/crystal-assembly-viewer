@@ -7,6 +7,11 @@ enum compiler_type_enum {
   UNKNOWN_COMPILER
 };
 
-enum compiler_type_enum identify_compiler(const char* file_path);
+struct compiler_match_data {
+  enum compiler_type_enum type;
+  unsigned int priority;
+};
+
+struct compiler_match_data identify_compiler(const char* file_path);
 
 #endif

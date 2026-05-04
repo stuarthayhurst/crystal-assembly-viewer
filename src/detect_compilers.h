@@ -6,6 +6,7 @@
 struct compiler_info {
   char* path;
   enum compiler_type_enum type;
+  unsigned int priority;
 };
 
 struct compiler_info* detect_unique_compilers(unsigned int* compiler_count);

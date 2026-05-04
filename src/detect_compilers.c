@@ -117,12 +117,15 @@ static unsigned int get_base_path_length(const char* path) {
 
 //Write a compiler info struct from values
 static void write_compiler_info(struct compiler_info* info, const char* compiler_name,
-                                enum compiler_type_enum compiler_type) {
+                                struct compiler_match_data match_data) {
   //Allocate and copy the name
   info->path = strdup(compiler_name);
 
   //Set the type
-  info->type = compiler_type;
+  info->type = match_data.type;
+
+  //Set the priority
+  info->priority = match_data.priority;
 }
 
 /*
@@ -131,13 +134,13 @@ static void write_compiler_info(struct compiler_info* info, const char* compiler
 */
 static void write_compiler_info_entry(struct compiler_info* info, unsigned int entry_index,
                                       const char* compiler_name,
-                                      enum compiler_type_enum compiler_type) {
+                                      struct compiler_match_data match_data) {
   //Don't write anything when calculating sizes
   if (info == NULL) {
     return;
   }
 
-  write_compiler_info(info + entry_index, compiler_name, compiler_type);
+  write_compiler_info(info + entry_index, compiler_name, match_data);
 }
 
 /*
@@ -147,7 +150,8 @@ static void write_compiler_info_entry(struct compiler_info* info, unsigned int e
 static void copy_compiler_info_entry(struct compiler_info* src, struct compiler_info* dest,
                                      unsigned int entry_index) {
   if (dest != NULL) {
-    write_compiler_info(dest + entry_index, src->path, src->type);
+    const struct compiler_match_data match_data = {src->type, src->priority};
+    write_compiler_info(dest + entry_index, src->path, match_data);
   }
 }
 
@@ -228,11 +232,11 @@ static unsigned int search_compiler_directory(struct compiler_info* compiler_arr
                                                            ignored_path_length);
     } else if (is_file) {
       //Save the path if it's a known compiler
-      enum compiler_type_enum compiler_type = identify_compiler(child_path);
-      if (compiler_type != UNKNOWN_COMPILER) {
+      struct compiler_match_data match_data = identify_compiler(child_path);
+      if (match_data.type != UNKNOWN_COMPILER) {
         //Create the array entry
         write_compiler_info_entry(compiler_array, detected_compiler_count,
-                                  child_path, compiler_type);
+                                  child_path, match_data);
         detected_compiler_count++;
       }
     }
@@ -347,11 +351,39 @@ static unsigned int fill_unique_compilers(struct compiler_info* compiler_array,
       }
     }
 
-    //If the compiler was unique so far, include it
+    /*
+     - If the compiler was unique so far, include it
+     - Otherwise, keep the one with a lower priority number (higher priority)
+    */
     if (!matched) {
       //Copy the unique entry
       copy_compiler_info_entry(&compiler_array[i], unique_compiler_array, unique_compiler_count);
       unique_compiler_count++;
+    } else {
+      //Order doesn't matter if we're just calculating the size
+      if (unique_compiler_array == NULL) {
+        continue;
+      }
+
+      //Find the old entry's index in the unique compiler array
+      unsigned int existing_index = 0;
+      for (unsigned int existing_entry_index = 0; existing_entry_index < i; existing_entry_index++) {
+        struct file_id existing_compiler_file_id;
+        get_file_id(unique_compiler_array[existing_entry_index].path, &existing_compiler_file_id);
+
+        if (file_id_matches(&compiler_file_id, &existing_compiler_file_id)) {
+          existing_index = existing_entry_index;
+          break;
+        }
+      }
+
+      //Do nothing if the existing entry is higher priority
+      if (unique_compiler_array[existing_index].priority <= compiler_array[i].priority) {
+        continue;
+      }
+
+      //Copy the new entry over the old one
+      copy_compiler_info_entry(&compiler_array[i], unique_compiler_array, existing_index);
     }
   }
 
