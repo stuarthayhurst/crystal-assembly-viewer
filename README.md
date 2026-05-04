@@ -19,8 +19,17 @@
     - Defaults to `/usr/local`
 
 ## Usage:
-  - `./build/crystal`
+  - A file to open to can optionally be supplied as the first argument
   - Compilers can only be detected if they're reachable from `$PATH`
+
+### In-place:
+  - `make build -j$(nproc)`
+  - `./build/crystal [FILE]`
+
+### System:
+  - `make build -j$(nproc)`
+  - `sudo make install`
+  - `crystal [FILE]`
 
 ## Dependencies:
   - Package names are correct for Debian, other distros may vary
