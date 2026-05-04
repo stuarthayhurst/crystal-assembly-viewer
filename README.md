@@ -1,8 +1,7 @@
 ## Crystal
   - Inspect the assembly output from various compilers, locally
-  - Syntax highlighting currently only supports x86, pull requests are welcome for others
-    - Due to the size of the x86 ISA, many instructions are likely missing
-    - Pull requests are welcome for those too
+  - Syntax highlighting is best-effort and currently supports x86 and ARM
+    - Pull requests are welcome for more ISAs, as well as improving the existing ones
 
 ## Building:
   - `make build`: Builds the program

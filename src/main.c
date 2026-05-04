@@ -29,11 +29,13 @@ static const char remove_pane_button_tooltip[] = "Remove last compiler";
 
 static const char* language_names[] = {
   "X86",
+  "ARM",
   NULL
 };
 
 static const char* language_strings[] = {
-  "assembler-x86"
+  "assembler-x86",
+  "assembler-arm"
 };
 
 static const char frame_css_string[] = ".warning-border {border-color: #ba0404; border-width: 2px;}";

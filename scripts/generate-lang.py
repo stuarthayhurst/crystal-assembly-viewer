@@ -3,7 +3,8 @@
 import sys
 import xml.etree.ElementTree as ElementTree
 
-import definitions_x86 as definitions
+import definitions_x86
+import definitions_arm
 
 def appendKeywordTag(element, keyword):
   newElement = ElementTree.SubElement(element, "keyword")
@@ -16,13 +17,23 @@ def findInstructionsTag(tree):
       return element
 
 #Take the base input, the header input and output path
-if (len(sys.argv) < 4):
-  print("Expected two input files and an output file")
+if (len(sys.argv) < 5):
+  print("Expected two input files, an architecture, and an output file")
   exit(1)
 
 inputFile = sys.argv[1]
 headerFile = sys.argv[2]
-outputFile = sys.argv[3]
+architecture = sys.argv[3]
+outputFile = sys.argv[4]
+
+definitions = None
+if (architecture == "x86"):
+  definitions = definitions_x86
+elif (architecture == "arm"):
+  definitions = definitions_arm
+else:
+  printf(f"Unknown architecture '{architecture}'")
+  exit(1)
 
 #Parse the template and find the instructions tag to modify
 languageTree = ElementTree.parse(inputFile)

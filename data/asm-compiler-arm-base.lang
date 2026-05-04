@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd">
+<!--Originally based on the language definition shared on: 
+https://wiki.gnome.org/Projects/GtkSourceView/LanguageDefinitions?action=AttachFile&do=view&target=asm-intel.lang
+-->
+<!-- Developed further from:
+https://gist.github.com/mrbesher/5c98da1c220d10e2aba8276554d3456c
+https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text-editor/custom/asm-intel.lang
+-->
+<!-- Sync everything above this line with asm-header.xml -->
+<language id="assembler-arm" name="Assembler (ARM Compiler)" version="2.0" section="Sources">
+	<metadata>
+		<property name="mimetypes">text/x-asm;text/x-assembler</property>
+		<property name="globs">*.asm</property>
+	</metadata>
+
+	<styles>
+		<style id="preprocessor" name="Preprocessor" map-to="def:preprocessor"/>
+		<style id="keyword" name="Keyword" map-to="def:keyword"/>
+		<style id="comment" name="Comment" map-to="def:comment"/>
+		<style id="operator" name="Operator" map-to="def:operator"/>
+		<style id="string" name="String" map-to="def:string"/>
+		<style id="escaped-character" name="Escaped Character" map-to="def:special-char"/>
+		<style id="char" name="Character" map-to="def:character"/>
+		<style id="decimal" name="Data Type" map-to="def:decimal"/>
+		<style id="type" name="Data Type" map-to="def:type"/>
+		<style id="section" name="Section" map-to="def:keyword"/>
+		<style id="directive" name="Directive" map-to="def:keyword"/>
+	</styles>
+
+	<default-regex-options case-sensitive="false"/>
+
+	<definitions>
+		<context id="assembler-arm">
+			<include>
+				<context id="comment" style-ref="comment">
+					<start>#|@|;</start>
+					<end>$</end>
+				</context>
+				<context id="comment-multiline" style-ref="comment">
+					<start>/\*</start>
+					<end>\*/</end>
+				</context>
+				<context id="operator" style-ref="operator">
+					<match>[\-\,\:\+\*\/\(\)\{\}\[\]\|\%\?\$\=\!]</match>
+				</context>
+				<context id="string" style-ref="string">
+					<start>&quot;</start>
+					<end>&quot;</end>
+				</context>
+				<context id="character" style-ref="char">
+					<start>\'</start>
+					<end>\'</end>
+				</context>
+				<context id="escape" style-ref="escaped-character">
+					<match>\\.</match>
+  				</context>
+
+				<context id="data-sections" style-ref="section">
+					<match>\.(([pxlt]?)|((l|)(r|ro|)))data</match>
+				</context>
+				<context id="bss-sections" style-ref="section">
+					<match>\.(l|t)?bss</match>
+				</context>
+				<context id="sections" style-ref="section">
+					<prefix>\.</prefix>
+					<keyword>code</keyword>
+					<keyword>text</keyword>
+					<keyword>section</keyword>
+				</context>
+
+				<context id="cfi-directive" style-ref="directive">
+					<!-- From binutils documentation (loosely) -->
+					<match>\.cfi_([A-Za-z0-9_]*)</match>
+				</context>
+				<context id="addrsig-directive" style-ref="directive">
+					<!-- Emitted by various compilers -->
+					<match>\.addrsig((_([A-Za-z0-9_]*))?)</match>
+				</context>
+				<context id="sized-directives" style-ref="directive">
+					<match>\.(dcb|dc|ds)(\.[abdlswx])?</match>
+				</context>
+				<context id="directives" style-ref="directive">
+					<prefix>\.</prefix>
+					<!-- From binutils documentation -->
+					<keyword>abort</keyword>
+					<keyword>align</keyword>
+					<keyword>altmacro</keyword>
+					<keyword>ascii</keyword>
+					<keyword>asciz</keyword>
+					<keyword>attach_to_group</keyword>
+					<keyword>balign</keyword>
+					<keyword>balignl</keyword>
+					<keyword>balignw</keyword>
+					<keyword>base64</keyword>
+					<keyword>bundle_align_mode</keyword>
+					<keyword>bundle_lock</keyword>
+					<keyword>bundle_unlock</keyword>
+					<keyword>byte</keyword>
+					<keyword>comm</keyword>
+					<keyword>def</keyword>
+					<keyword>desc_symbol</keyword>
+					<keyword>dim</keyword>
+					<keyword>double</keyword>
+					<keyword>eject</keyword>
+					<keyword>else</keyword>
+					<keyword>elseif</keyword>
+					<keyword>end</keyword>
+					<keyword>endef</keyword>
+					<keyword>endfunc</keyword>
+					<keyword>endif</keyword>
+					<keyword>equ</keyword>
+					<keyword>equiv</keyword>
+					<keyword>eqv</keyword>
+					<keyword>errif</keyword>
+					<keyword>error</keyword>
+					<keyword>exitm</keyword>
+					<keyword>extern</keyword>
+					<keyword>fail</keyword>
+					<keyword>file</keyword>
+					<keyword>fill</keyword>
+					<keyword>float</keyword>
+					<keyword>func</keyword>
+					<keyword>global</keyword>
+					<keyword>gnu_attribute</keyword>
+					<keyword>gnu_subsection</keyword>
+					<keyword>hidden</keyword>
+					<keyword>hword</keyword>
+					<keyword>ident</keyword>
+					<keyword>if</keyword>
+					<keyword>incbin</keyword>
+					<keyword>include</keyword>
+					<keyword>int</keyword>
+					<keyword>internal</keyword>
+					<keyword>irp</keyword>
+					<keyword>irpc</keyword>
+					<keyword>lcomm</keyword>
+					<keyword>lflags</keyword>
+					<keyword>linkonce</keyword>
+					<keyword>list</keyword>
+					<keyword>ln</keyword>
+					<keyword>loc</keyword>
+					<keyword>loc_mark</keyword>
+					<keyword>local</keyword>
+					<keyword>long</keyword>
+					<keyword>macro</keyword>
+					<keyword>mri</keyword>
+					<keyword>noaltmacro</keyword>
+					<keyword>nolist</keyword>
+					<keyword>nop</keyword>
+					<keyword>nops</keyword>
+					<keyword>octa</keyword>
+					<keyword>offset</keyword>
+					<keyword>org</keyword>
+					<keyword>p2align</keyword>
+					<keyword>popsection</keyword>
+					<keyword>previous</keyword>
+					<keyword>print</keyword>
+					<keyword>protected</keyword>
+					<keyword>psize</keyword>
+					<keyword>purgem</keyword>
+					<keyword>pushsection</keyword>
+					<keyword>quad</keyword>
+					<keyword>reloc</keyword>
+					<keyword>rept</keyword>
+					<keyword>sbttl</keyword>
+					<keyword>scl</keyword>
+					<keyword>section</keyword>
+					<keyword>set</keyword>
+					<keyword>short</keyword>
+					<keyword>single</keyword>
+					<keyword>size</keyword>
+					<keyword>skip</keyword>
+					<keyword>sleb128</keyword>
+					<keyword>space</keyword>
+					<keyword>stabd</keyword>
+					<keyword>string</keyword>
+					<keyword>struct</keyword>
+					<keyword>subsection</keyword>
+					<keyword>symver</keyword>
+					<keyword>tag</keyword>
+					<keyword>text</keyword>
+					<keyword>title</keyword>
+					<keyword>tls_common</keyword>
+					<keyword>type</keyword>
+					<keyword>uleb128</keyword>
+					<keyword>val</keyword>
+					<keyword>version</keyword>
+					<keyword>vtable_entry</keyword>
+					<keyword>vtable_inherit</keyword>
+					<keyword>warnif</keyword>
+					<keyword>warning</keyword>
+					<keyword>weak</keyword>
+					<keyword>weakref</keyword>
+					<keyword>word</keyword>
+					<keyword>zero</keyword>
+					<keyword>2byte</keyword>
+					<keyword>4byte</keyword>
+					<keyword>8byte</keyword>
+
+					<!-- Deprecated from binutils -->
+					<keyword>abort</keyword>
+					<keyword>line</keyword>
+
+					<!-- Emitted by various compilers -->
+					<keyword>comment</keyword>
+					<keyword>note</keyword>
+					<keyword>other</keyword>
+					<keyword>globl</keyword>
+					<keyword>ident</keyword>
+					<keyword>init_array</keyword>
+					<keyword>fini_array</keyword>
+				</context>
+
+				<context id="commands" style-ref="preprocessor">
+					<keyword>format</keyword>
+		    			<keyword>as</keyword>
+		    			<keyword>use16</keyword>
+		    			<keyword>use32</keyword>
+		    			<keyword>use64</keyword>
+
+		    			<keyword>equ</keyword>
+		    			<keyword>times</keyword>
+		    			<keyword>if</keyword>
+		    			<keyword>repeat</keyword>
+		    			<keyword>while</keyword>
+		    			<keyword>end</keyword>
+		    			<keyword>break</keyword>
+
+		    			<keyword>display</keyword>
+		    			<keyword>err</keyword>
+
+		    			<keyword>include</keyword>
+		    			<keyword>macro</keyword>
+		    			<keyword>align</keyword>
+
+		    			<keyword>db</keyword>
+		    			<keyword>du</keyword>
+		    			<keyword>dw</keyword>
+		    			<keyword>dd</keyword>
+		    			<keyword>dq</keyword>
+
+		    			<keyword>rb</keyword>
+		    			<keyword>rw</keyword>
+		    			<keyword>rd</keyword>
+		    			<keyword>rq</keyword>
+					<keyword>short</keyword>
+		    			<keyword>near</keyword>
+		    			<keyword>far</keyword>
+
+		    			<keyword>byte</keyword>
+		    			<keyword>word</keyword>
+		    			<keyword>dword</keyword>
+		    			<keyword>qword</keyword>
+				</context>
+
+				<context id="registers-general" style-ref="type">
+					<match>\br([0-9]|1[0-5])\b</match>
+				</context>
+				<context id="registers-a" style-ref="type">
+					<match>\bv([1-5])\b</match>
+				</context>
+				<context id="registers-v" style-ref="type">
+					<match>\bv([1-8])\b</match>
+				</context>
+				<context id="registers-x" style-ref="type">
+					<match>\bx([0-9]|[1-2][0-9]|30)\b</match>
+				</context>
+				<context id="registers-w" style-ref="type">
+					<match>\bw([0-9]|[1-2][0-9]|30)\b</match>
+				</context>
+				<context id="registers-named" style-ref="type">
+					<match>\b(pc|lr|sp|ip|sl|sb)\b</match>
+				</context>
+
+				<context id="instructions" style-ref="keyword">
+				  <!-- Generated section -->
+				</context>
+
+				<context id="label" style-ref="preprocessor">
+					<match>(\.|[A-Za-z_])[\.A-Za-z0-9_]*</match>
+				</context>
+				<context id="decimal" style-ref="decimal">
+					<match>\b([1-9][0-9]*|0)([Uu]([Ll]|LL|ll)?|([Ll]|LL|ll)[Uu]?)?\b</match>
+				</context>
+				<context id="float" style-ref="decimal">
+					<match>\b([0-9]+[Ee][-]?[0-9]+|([0-9]*\.[0-9]+|[0-9]+\.)([Ee][-]?[0-9]+)?)[fFlL]?</match>
+				</context>
+				<context id="hex" style-ref="decimal">
+					<match>\b0[xX][0-9a-fA-F]+([Uu]([Ll]|LL|ll)?|([Ll]|LL|ll)[Uu]?)?\b</match>
+				</context>
+				<context id="dot" style-ref="operator">
+					<match>\.</match>
+				</context>
+			</include>
+		</context>
+	</definitions>
+</language>
