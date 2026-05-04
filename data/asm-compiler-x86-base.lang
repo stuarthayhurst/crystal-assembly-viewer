@@ -8,7 +8,7 @@ https://gist.github.com/mrbesher/5c98da1c220d10e2aba8276554d3456c
 https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text-editor/custom/asm-intel.lang
 -->
 <!-- Sync everything above this line with asm-header.xml -->
-<language id="assembler" name="Assembler (Intel)" version="2.0" section="Sources">
+<language id="assembler-x86" name="Assembler (x86 Compiler)" version="2.0" section="Sources">
 	<metadata>
 		<property name="mimetypes">text/x-asm;text/x-assembler</property>
 		<property name="globs">*.asm</property>
@@ -31,7 +31,7 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 	<default-regex-options case-sensitive="false"/>
 
 	<definitions>
-		<context id="assembler">
+		<context id="assembler-x86">
 			<include>
 				<context id="comment" style-ref="comment">
 					<start>#|@|;</start>

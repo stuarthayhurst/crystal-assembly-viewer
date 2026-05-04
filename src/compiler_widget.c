@@ -155,7 +155,7 @@ GtkWidget* create_compiler_widget() {
   GtkTextBuffer* text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
   GtkSourceLanguageManager* language_manager = gtk_source_language_manager_get_default();
   GtkSourceLanguage* language = gtk_source_language_manager_get_language(language_manager,
-                                                                         "assembler");
+                                                                         "assembler-x86");
   gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(text_buffer), language);
   set_compiler_widget_syntax_highlighting(vbox, false);
 

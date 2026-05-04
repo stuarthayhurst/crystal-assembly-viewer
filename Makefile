@@ -27,20 +27,21 @@ endif
 CFLAGS += $(shell pkg-config --cflags libadwaita-1 gtksourceview-5)
 LDFLAGS += $(shell pkg-config --libs libadwaita-1 gtksourceview-5)
 
-build: $(BUILD_DIR)/crystal $(BUILD_DIR)/asm-compiler.lang $(BUILD_DIR)/io.github.stuarthayhurst.Crystal.desktop
+build: $(BUILD_DIR)/crystal $(BUILD_DIR)/asm-compiler-x86.lang $(BUILD_DIR)/io.github.stuarthayhurst.Crystal.desktop
 
 debug:
 	@DEBUG="true" $(MAKE) --no-print-directory build
 
 install: build
 	install --strip -D -t "$(BINARY_DIR)" "$(BUILD_DIR)/crystal"
-	install -m 0664 -D -t "$(DATA_DIR)" "$(BUILD_DIR)/asm-compiler.lang"
+	install -m 0664 -D -t "$(DATA_DIR)" "$(BUILD_DIR)/asm-compiler-x86.lang"
 	install -m 0664 -D -t "$(APPS_DIR)" "$(BUILD_DIR)/io.github.stuarthayhurst.Crystal.desktop"
 	install -m 0664 -D -t "$(ICON_DIR)" "data/io.github.stuarthayhurst.Crystal.svg"
 
 uninstall:
 	@rm -rv "$(BINARY_DIR)/crystal"
-	@rm -rv "$(DATA_DIR)/asm-compiler.lang"
+	@rm -rfv "$(DATA_DIR)/asm-compiler.lang"
+	@rm -rfv "$(DATA_DIR)/asm-compiler-x86.lang"
 	@rm -rv "$(APPS_DIR)/io.github.stuarthayhurst.Crystal.desktop"
 	@rm -rv "$(ICON_DIR)/io.github.stuarthayhurst.Crystal.svg"
 	@rm -rfvi "$(DATA_DIR)"
@@ -59,9 +60,9 @@ $(BUILD_DIR)/io.github.stuarthayhurst.Crystal.desktop: data/io.github.stuarthayh
 	@cp -v "$<" "$@"
 	@echo "Path=$(BINARY_DIR)" >> "$@"
 
-$(BUILD_DIR)/asm-compiler.lang: data/asm-compiler-base.lang data/asm-header.xml scripts/definitions.py scripts/generate-lang.py
+$(BUILD_DIR)/asm-compiler-x86.lang: data/asm-compiler-x86-base.lang data/asm-header.xml scripts/definitions.py scripts/generate-lang.py
 	@mkdir -p "$(BUILD_DIR)"
-	./scripts/generate-lang.py "data/asm-compiler-base.lang" "data/asm-header.xml" "$@"
+	./scripts/generate-lang.py "data/asm-compiler-x86-base.lang" "data/asm-header.xml" "$@"
 
 $(OBJECT_DIR)/%.o: ./src/%.c $(HEADERS_SOURCE)
 	@mkdir -p "$(OBJECT_DIR)"
