@@ -10,6 +10,7 @@
 #include "detect_compilers.h"
 #include "panes.h"
 #include "run_compiler.h"
+#include "string_utils.h"
 
 #define MAX_NUM_PANES 4
 
@@ -102,10 +103,8 @@ static void free_binary_path(char* binary_path) {
 }
 
 static char* generate_application_path(char* binary_path) {
-  const unsigned int binary_path_length = strlen(binary_path);
-
   //If the program is running in-place, just use the binary path
-  if (strstr(binary_path, "bin/") != binary_path + binary_path_length - 4) {
+  if (!string_ends_with(binary_path, "bin/")) {
     return strdup(binary_path);
   }
 
@@ -116,6 +115,7 @@ static char* generate_application_path(char* binary_path) {
    - Add 1 for the final "/"
    - Add space for the ID
   */
+  const unsigned int binary_path_length = strlen(binary_path);
   const unsigned int application_path_length = binary_path_length + 3 + strlen(app_id);
   const unsigned int application_path_size = application_path_length + 1;
 
