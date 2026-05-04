@@ -117,15 +117,15 @@ static unsigned int get_base_path_length(const char* path) {
 
 //Write a compiler info struct from values
 static void write_compiler_info(struct compiler_info* info, const char* compiler_name,
-                                struct compiler_match_data match_data) {
+                                const struct compiler_match_data* match_data) {
   //Allocate and copy the name
   info->path = strdup(compiler_name);
 
   //Set the type
-  info->type = match_data.type;
+  info->type = match_data->type;
 
   //Set the priority
-  info->priority = match_data.priority;
+  info->priority = match_data->priority;
 }
 
 /*
@@ -134,7 +134,7 @@ static void write_compiler_info(struct compiler_info* info, const char* compiler
 */
 static void write_compiler_info_entry(struct compiler_info* info, unsigned int entry_index,
                                       const char* compiler_name,
-                                      struct compiler_match_data match_data) {
+                                      const struct compiler_match_data* match_data) {
   //Don't write anything when calculating sizes
   if (info == NULL) {
     return;
@@ -151,7 +151,7 @@ static void copy_compiler_info_entry(struct compiler_info* src, struct compiler_
                                      unsigned int entry_index) {
   if (dest != NULL) {
     const struct compiler_match_data match_data = {src->type, src->priority};
-    write_compiler_info(dest + entry_index, src->path, match_data);
+    write_compiler_info(dest + entry_index, src->path, &match_data);
   }
 }
 
@@ -236,7 +236,7 @@ static unsigned int search_compiler_directory(struct compiler_info* compiler_arr
       if (match_data.type != UNKNOWN_COMPILER) {
         //Create the array entry
         write_compiler_info_entry(compiler_array, detected_compiler_count,
-                                  child_path, match_data);
+                                  child_path, &match_data);
         detected_compiler_count++;
       }
     }
