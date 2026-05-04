@@ -3,7 +3,7 @@
 import sys
 import xml.etree.ElementTree as ElementTree
 
-import definitions
+import definitions_x86 as definitions
 
 def appendKeywordTag(element, keyword):
   newElement = ElementTree.SubElement(element, "keyword")

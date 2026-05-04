@@ -60,7 +60,7 @@ $(BUILD_DIR)/io.github.stuarthayhurst.Crystal.desktop: data/io.github.stuarthayh
 	@cp -v "$<" "$@"
 	@echo "Path=$(BINARY_DIR)" >> "$@"
 
-$(BUILD_DIR)/asm-compiler-x86.lang: data/asm-compiler-x86-base.lang data/asm-header.xml scripts/definitions.py scripts/generate-lang.py
+$(BUILD_DIR)/asm-compiler-x86.lang: data/asm-compiler-x86-base.lang data/asm-header.xml scripts/definitions_x86.py scripts/generate-lang.py
 	@mkdir -p "$(BUILD_DIR)"
 	./scripts/generate-lang.py "data/asm-compiler-x86-base.lang" "data/asm-header.xml" "$@"
 
