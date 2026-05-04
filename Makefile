@@ -39,11 +39,11 @@ install: build
 	install -m 0664 -D -t "$(ICON_DIR)" "data/io.github.stuarthayhurst.Crystal.svg"
 
 uninstall:
-	@rm -rv "$(BINARY_DIR)/crystal"
-	@rm -rfv "$(DATA_DIR)/asm-compiler.lang"
-	@rm -rfv "$(DATA_DIR)/asm-compiler-x86.lang"
-	@rm -rv "$(APPS_DIR)/io.github.stuarthayhurst.Crystal.desktop"
-	@rm -rv "$(ICON_DIR)/io.github.stuarthayhurst.Crystal.svg"
+	@rm -fv "$(BINARY_DIR)/crystal"
+	@rm -fv "$(DATA_DIR)/asm-compiler.lang"
+	@rm -fv "$(DATA_DIR)/asm-compiler-x86.lang"
+	@rm -fv "$(APPS_DIR)/io.github.stuarthayhurst.Crystal.desktop"
+	@rm -fv "$(ICON_DIR)/io.github.stuarthayhurst.Crystal.svg"
 	@rm -rfvi "$(DATA_DIR)"
 
 clean:
