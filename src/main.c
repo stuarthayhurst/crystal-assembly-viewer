@@ -23,8 +23,18 @@ static const char file_label_text[] = "No file selected";
 
 static const char file_button_tooltip[] = "Open a file";
 static const char recompile_button_tooltip[] = "Recompile the selected file";
+static const char language_selector_tooltip[] = "Select an architecture for syntax highlighting";
 static const char add_pane_button_tooltip[] = "Add a new compiler";
 static const char remove_pane_button_tooltip[] = "Remove last compiler";
+
+static const char* language_names[] = {
+  "X86",
+  NULL
+};
+
+static const char* language_strings[] = {
+  "assembler-x86"
+};
 
 static const char frame_css_string[] = ".warning-border {border-color: #ba0404; border-width: 2px;}";
 
@@ -38,6 +48,7 @@ static GtkWidget* remove_pane_button;
 static GtkWidget* file_button;
 static GtkWidget* file_label;
 static GtkWidget* recompile_button;
+static GtkWidget* language_selector;
 
 static GtkCssProvider* frame_css_provider = NULL;
 
@@ -321,6 +332,18 @@ static void recompile_button_clicked_callback() {
   compile_start();
 }
 
+static void language_selector_callback() {
+  //Find the index of the selected language
+  unsigned int language_index = 0;
+  const guint selected_index = gtk_drop_down_get_selected(GTK_DROP_DOWN(language_selector));
+  language_index = (selected_index != GTK_INVALID_LIST_POSITION) ? selected_index : 0;
+
+  //Set the compilers to match the language
+  for (unsigned int i = 0; i < num_panes; i++) {
+    set_compiler_widget_language(compiler_widgets[i], language_strings[language_index]);
+  }
+}
+
 static void setup_content(GtkWidget* window) {
   //Create a vbox for the window content
   GtkWidget* vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
@@ -336,32 +359,39 @@ static void setup_content(GtkWidget* window) {
   gtk_widget_set_halign(button_box, GTK_ALIGN_END);
   gtk_box_set_spacing(GTK_BOX(button_box), 8);
 
-  //Create an hbox for the file elements
-  GtkWidget* file_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_widget_set_hexpand(file_box, true);
-  gtk_widget_set_halign(file_box, GTK_ALIGN_START);
-  gtk_box_set_spacing(GTK_BOX(file_box), 8);
+  //Create an hbox for the file elements and language selector
+  GtkWidget* left_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_set_hexpand(left_box, true);
+  gtk_widget_set_halign(left_box, GTK_ALIGN_START);
+  gtk_box_set_spacing(GTK_BOX(left_box), 8);
 
   //Create a button to open a file
   file_button = gtk_button_new_from_icon_name(file_button_icon);
   g_signal_connect(file_button, "clicked", G_CALLBACK(file_button_clicked_callback), NULL);
-  gtk_box_append(GTK_BOX(file_box), file_button);
+  gtk_box_append(GTK_BOX(left_box), file_button);
   gtk_widget_set_tooltip_text(file_button, file_button_tooltip);
 
   //Create a label for the open file
   file_label = gtk_label_new(file_label_text);
-  gtk_box_append(GTK_BOX(file_box), file_label);
+  gtk_box_append(GTK_BOX(left_box), file_label);
 
   //Create a button to recompile
   recompile_button = gtk_button_new_from_icon_name(recompile_button_icon);
   g_signal_connect(recompile_button, "clicked", G_CALLBACK(recompile_button_clicked_callback), NULL);
-  gtk_box_append(GTK_BOX(file_box), recompile_button);
+  gtk_box_append(GTK_BOX(left_box), recompile_button);
   gtk_widget_set_tooltip_text(recompile_button, recompile_button_tooltip);
+
+  //Create a dropdown to select the language
+  language_selector = gtk_drop_down_new_from_strings(language_names);
+  g_signal_connect(language_selector, "notify::selected",
+                   G_CALLBACK(language_selector_callback), NULL);
+  gtk_box_append(GTK_BOX(left_box), language_selector);
+  gtk_widget_set_tooltip_text(language_selector, language_selector_tooltip);
 
   //Create an hbox for the panel boxes
   GtkWidget* panel_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
   gtk_box_append(GTK_BOX(vbox), panel_box);
-  gtk_box_append(GTK_BOX(panel_box), file_box);
+  gtk_box_append(GTK_BOX(panel_box), left_box);
   gtk_box_append(GTK_BOX(panel_box), button_box);
 
   //Create the add pane button
