@@ -152,14 +152,11 @@ GtkWidget* create_compiler_widget() {
   gtk_widget_set_vexpand(text_view, TRUE);
 
   //Set the syntax highlighting with a custom assembly language, start disabled
-  GtkTextBuffer* text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
-  GtkSourceLanguageManager* language_manager = gtk_source_language_manager_get_default();
-  GtkSourceLanguage* language = gtk_source_language_manager_get_language(language_manager,
-                                                                         "assembler-x86");
-  gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(text_buffer), language);
+  set_compiler_widget_language(vbox, "assembler-x86");
   set_compiler_widget_syntax_highlighting(vbox, false);
 
   //Set the text buffer to a placeholder
+  GtkTextBuffer* text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
   gtk_text_buffer_set_text(GTK_TEXT_BUFFER(text_buffer), default_output_text, -1);
 
   return vbox;
@@ -189,6 +186,17 @@ void set_compiler_widget_failed(GtkWidget* compiler_widget, bool failed) {
   } else {
     gtk_widget_remove_css_class(frame, css_frame_warning_class);
   }
+}
+
+void set_compiler_widget_language(GtkWidget* compiler_widget, const char* language_string) {
+  GtkTextView* text_view = get_text_view_from_widget(compiler_widget);
+  GtkTextBuffer* text_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+
+  GtkSourceLanguageManager* language_manager = gtk_source_language_manager_get_default();
+  GtkSourceLanguage* language = gtk_source_language_manager_get_language(language_manager,
+                                                                         language_string);
+
+  gtk_source_buffer_set_language(GTK_SOURCE_BUFFER(text_buffer), language);
 }
 
 void append_language_path(const char* path) {
