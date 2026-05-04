@@ -383,6 +383,7 @@ static unsigned int fill_unique_compilers(struct compiler_info* compiler_array,
       }
 
       //Copy the new entry over the old one
+      free(unique_compiler_array[existing_index].path);
       copy_compiler_info_entry(&compiler_array[i], unique_compiler_array, existing_index);
     }
   }
