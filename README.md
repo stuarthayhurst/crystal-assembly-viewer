@@ -33,10 +33,17 @@
 
 ## Dependencies:
   - Package names are correct for Debian, other distros may vary
+
+### Building:
   - `make`
   - `libadwaita-1-dev`
   - `libgtksourceview-5-dev`
+  - `python3`
   - A C23 compatible compiler
+
+### Runtime:
+  - `libadwaita-1-0`
+  - `libgtksourceview-5-0`
 
 ## Licence:
   - This project is available under the terms of the GPL-3.0 License
