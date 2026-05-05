@@ -309,6 +309,15 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 				<context id="registers-a" style-ref="type">
 					<match>\bv([1-5])\b</match>
 				</context>
+				<context id="registers-d" style-ref="type">
+					<match>\bx([0-9]|1[0-5])\b</match>
+				</context>
+				<context id="registers-f" style-ref="type">
+					<match>\bf([0-9]|[1-2][0-9]|3[0-1])\b</match>
+				</context>
+				<context id="registers-s" style-ref="type">
+					<match>\bs([0-9]|[1-2][0-9]|3[0-1])\b</match>
+				</context>
 				<context id="registers-v" style-ref="type">
 					<match>\bv([1-8])\b</match>
 				</context>
