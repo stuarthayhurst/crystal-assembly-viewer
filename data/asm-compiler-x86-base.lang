@@ -215,6 +215,14 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 					<keyword>init_array</keyword>
 					<keyword>fini_array</keyword>
 				</context>
+				<context id="x86-directives" style-ref="directive">
+					<prefix>\.</prefix>
+					<!-- From binutils documentation -->
+					<keyword>largecomm</keyword>
+					<keyword>value</keyword>
+					<keyword>insn</keyword>
+					<keyword>noopt</keyword>
+				</context>
 
 				<context id="commands" style-ref="preprocessor">
 					<keyword>format</keyword>
