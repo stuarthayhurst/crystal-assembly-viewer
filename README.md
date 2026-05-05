@@ -3,6 +3,8 @@
   - Syntax highlighting is best-effort and currently supports x86 and ARM
     - Pull requests are welcome for more ISAs, as well as improving the existing ones
 
+![Screenshot](docs/screenshot-1.png)
+
 ## Building:
   - `make build`: Builds the program
     - Supports multiple threads with `-j[THREAD COUNT]`
