@@ -211,6 +211,55 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 					<keyword>init_array</keyword>
 					<keyword>fini_array</keyword>
 				</context>
+				<context id="arm-directives" style-ref="directive">
+					<prefix>\.</prefix>
+					<!-- From binutils documentation -->
+					<keyword>arch</keyword>
+					<keyword>arch_extension</keyword>
+					<keyword>arm</keyword>
+					<keyword>cantunwind</keyword>
+					<keyword>cpu</keyword>
+					<keyword>dn</keyword>
+					<keyword>qn</keyword>
+					<keyword>eabi_attribute</keyword>
+					<keyword>even</keyword>
+					<keyword>extend</keyword>
+					<keyword>ldouble</keyword>
+					<keyword>float16</keyword>
+					<keyword>float16_format</keyword>
+					<keyword>fnend</keyword>
+					<keyword>fnstart</keyword>
+					<keyword>force_thumb</keyword>
+					<keyword>fpu</keyword>
+					<keyword>handlerdata</keyword>
+					<keyword>inst</keyword>
+					<keyword>inst.n</keyword>
+					<keyword>inst.w</keyword>
+					<keyword>ltorg</keyword>
+					<keyword>movsp</keyword>
+					<keyword>object_arch</keyword>
+					<keyword>packed</keyword>
+					<keyword>pacspval</keyword>
+					<keyword>pad</keyword>
+					<keyword>personality</keyword>
+					<keyword>personalityindex</keyword>
+					<keyword>pool</keyword>
+					<keyword>req</keyword>
+					<keyword>save</keyword>
+					<keyword>setfp</keyword>
+					<keyword>secrel32</keyword>
+					<keyword>syntax</keyword>
+					<keyword>thumb</keyword>
+					<keyword>thumb_func</keyword>
+					<keyword>tlsdescseq</keyword>
+					<keyword>unreq</keyword>
+					<keyword>unwind_raw</keyword>
+					<keyword>vsave</keyword>
+
+					<!-- Emitted by various compilers -->
+					<keyword>aeabi_attribute</keyword>
+					<keyword>aeabi_subsection</keyword>
+				</context>
 
 				<context id="commands" style-ref="preprocessor">
 					<keyword>format</keyword>
