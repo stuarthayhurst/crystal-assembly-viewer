@@ -44,6 +44,13 @@ for instructionGroup in definitions.instructionGroups:
   for instruction in instructionGroup:
     appendKeywordTag(instructionsTag, instruction)
 
+#Remove whitespace
+for tag in languageTree.iter():
+    if tag.text is not None:
+        tag.text = tag.text.strip()
+    if tag.tail is not None:
+        tag.tail = tag.tail.strip()
+
 #Read in the header
 headerText = ""
 with open(headerFile, "r") as file:
