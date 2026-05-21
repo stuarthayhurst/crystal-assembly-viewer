@@ -2,6 +2,7 @@
   - Inspect the assembly output from various compilers, locally
   - Syntax highlighting is best-effort and currently supports x86 and ARM
     - Pull requests are welcome for more ISAs, as well as improving the existing ones
+  - It can detect `gcc`, `g++`, `clang`, `clang++`, AOMP and ICX / ICPX
 
 ![Screenshot](docs/screenshot-1.png)
 
