@@ -32,20 +32,7 @@ static const unsigned int default_compiler_arguments_length[] = {
 //Return the default arguments for a given compiler
 static char** get_default_arguments(const struct compiler_info* info,
                                     char* source_path) {
-  unsigned int compiler_index = 0;
-  switch (info->type) {
-  case GCC:
-  case GXX:
-    compiler_index = 0;
-    break;
-  case CLANG:
-  case CLANGXX:
-    compiler_index = 1;
-    break;
-  case UNKNOWN_COMPILER:
-    compiler_index = 2;
-    break;
-  }
+  const unsigned int compiler_index = info->type;
 
   //Set the compiler binary and input path
   char** default_argument_array = default_compiler_arguments[compiler_index];
@@ -57,18 +44,7 @@ static char** get_default_arguments(const struct compiler_info* info,
 
 //Return the number of default arguments for a given compiler
 static unsigned int get_default_argument_count(enum compiler_type_enum compiler_type) {
-  switch (compiler_type) {
-  case GCC:
-  case GXX:
-    return default_compiler_arguments_length[0];
-  case CLANG:
-  case CLANGXX:
-    return default_compiler_arguments_length[1];
-  case UNKNOWN_COMPILER:
-    return default_compiler_arguments_length[2];
-  }
-
-  return 0;
+  return default_compiler_arguments_length[compiler_type];
 }
 
 /*

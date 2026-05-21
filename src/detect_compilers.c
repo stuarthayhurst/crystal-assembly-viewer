@@ -165,7 +165,7 @@ static struct compiler_info* allocate_compiler_array(unsigned int compiler_count
   struct compiler_info* compiler_array = malloc(sizeof(struct compiler_info) * compiler_count);
   for (unsigned int i = 0; i < compiler_count; i++) {
     compiler_array[i].path = NULL;
-    compiler_array[i].type = UNKNOWN_COMPILER;
+    compiler_array[i].type = UNKNOWN_FAMILY;
   }
 
   return compiler_array;
@@ -233,7 +233,7 @@ static unsigned int search_compiler_directory(struct compiler_info* compiler_arr
     } else if (is_file) {
       //Save the path if it's a known compiler
       struct compiler_match_data match_data = identify_compiler(child_path);
-      if (match_data.type != UNKNOWN_COMPILER) {
+      if (match_data.type != UNKNOWN_FAMILY) {
         //Create the array entry
         write_compiler_info_entry(compiler_array, detected_compiler_count,
                                   child_path, &match_data);

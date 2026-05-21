@@ -2,9 +2,9 @@
 #define CRYSTAL_MATCH_COMPILER
 
 enum compiler_type_enum {
-  GCC, GXX,
-  CLANG, CLANGXX,
-  UNKNOWN_COMPILER
+  GCC_FAMILY = 0,
+  CLANG_FAMILY = 1,
+  UNKNOWN_FAMILY = 2
 };
 
 struct compiler_match_data {

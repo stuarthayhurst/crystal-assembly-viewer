@@ -41,13 +41,13 @@ struct compiler_match {
 */
 #define UNKNOWN_PRIORITY 4
 static struct compiler_match compiler_match_info[14] = {
-  {"gcc", EXACT_MATCH, GCC, 2}, {"gcc-", REQUIRES_VERSION, GCC, 0},
-  {"g++", EXACT_MATCH, GXX, 2}, {"g++-", REQUIRES_VERSION, GXX, 0},
-  {"-linux-gnu-gcc", SUFFIX_MATCH, GCC, 3}, {"-linux-gnu-gcc-", ENDS_REQUIRES_VERSION, GCC, 1},
-  {"-linux-gnu-g++", SUFFIX_MATCH, GXX, 3}, {"-linux-gnu-g++-", ENDS_REQUIRES_VERSION, GXX, 1},
-  {"clang", EXACT_MATCH, CLANG, 2}, {"clang-", REQUIRES_VERSION, CLANG, 0},
-  {"clang++", EXACT_MATCH, CLANGXX, 3}, {"clang++-", REQUIRES_VERSION, CLANGXX, 1},
-  {"amdclang", EXACT_MATCH, CLANG, 2}, {"amdclang++-", EXACT_MATCH, CLANGXX, 3}
+  {"gcc", EXACT_MATCH, GCC_FAMILY, 2}, {"gcc-", REQUIRES_VERSION, GCC_FAMILY, 0},
+  {"g++", EXACT_MATCH, GCC_FAMILY, 2}, {"g++-", REQUIRES_VERSION, GCC_FAMILY, 0},
+  {"-linux-gnu-gcc", SUFFIX_MATCH, GCC_FAMILY, 3}, {"-linux-gnu-gcc-", ENDS_REQUIRES_VERSION, GCC_FAMILY, 1},
+  {"-linux-gnu-g++", SUFFIX_MATCH, GCC_FAMILY, 3}, {"-linux-gnu-g++-", ENDS_REQUIRES_VERSION, GCC_FAMILY, 1},
+  {"clang", EXACT_MATCH, CLANG_FAMILY, 2}, {"clang-", REQUIRES_VERSION, CLANG_FAMILY, 0},
+  {"clang++", EXACT_MATCH, CLANG_FAMILY, 3}, {"clang++-", REQUIRES_VERSION, CLANG_FAMILY, 1},
+  {"amdclang", EXACT_MATCH, CLANG_FAMILY, 2}, {"amdclang++-", EXACT_MATCH, CLANG_FAMILY, 3}
 };
 static const unsigned int compiler_match_count = \
   sizeof(compiler_match_info) / sizeof(struct compiler_match);
@@ -148,6 +148,6 @@ struct compiler_match_data identify_compiler(const char* file_path) {
     }
   } 
 
-  struct compiler_match_data unknown_match_data = {UNKNOWN_COMPILER, UNKNOWN_PRIORITY};
+  struct compiler_match_data unknown_match_data = {UNKNOWN_FAMILY, UNKNOWN_PRIORITY};
   return unknown_match_data;
 }
