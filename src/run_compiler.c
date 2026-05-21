@@ -15,17 +15,20 @@
 
 static char* default_arguments_gcc[] = {NULL, "-o", "/dev/stdout", "-S", NULL};
 static char* default_arguments_clang[] = {NULL, "-o", "/dev/stdout", "-S", NULL};
+static char* default_arguments_icx[] = {NULL, "-o", "/dev/stdout", "-S", NULL};
 static char* default_arguments_unknown[] = {NULL, NULL};
 
 static char** default_compiler_arguments[] = {
   default_arguments_gcc, //gcc and g++
   default_arguments_clang, //clang and clang++
+  default_arguments_icx, //icx and icpx
   default_arguments_unknown //Unknown compiler
 };
 
 static const unsigned int default_compiler_arguments_length[] = {
   sizeof(default_arguments_gcc) / sizeof(char*), //gcc and g++
   sizeof(default_arguments_clang) / sizeof(char*), //clang and clang++
+  sizeof(default_arguments_icx) / sizeof(char*), //icx and icpx
   sizeof(default_arguments_unknown) / sizeof(char*) //Unknown compiler
 };
 
