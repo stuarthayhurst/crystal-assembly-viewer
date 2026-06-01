@@ -13,12 +13,12 @@
 #include "detect_compilers.h"
 #include "match_compiler.h"
 
-static char* default_arguments_gcc[] = {NULL, "-o", "/dev/stdout", "-S", NULL};
-static char* default_arguments_clang[] = {NULL, "-o", "/dev/stdout", "-S", NULL};
-static char* default_arguments_icx[] = {NULL, "-o", "/dev/stdout", "-S", NULL};
-static char* default_arguments_unknown[] = {NULL, NULL};
+static const char* default_arguments_gcc[] = {NULL, "-o", "/dev/stdout", "-S", NULL};
+static const char* default_arguments_clang[] = {NULL, "-o", "/dev/stdout", "-S", NULL};
+static const char* default_arguments_icx[] = {NULL, "-o", "/dev/stdout", "-S", NULL};
+static const char* default_arguments_unknown[] = {NULL, NULL};
 
-static char** default_compiler_arguments[] = {
+static const char** default_compiler_arguments[] = {
   default_arguments_gcc, //gcc and g++
   default_arguments_clang, //clang and clang++
   default_arguments_icx, //icx and icpx
