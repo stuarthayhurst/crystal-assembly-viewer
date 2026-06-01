@@ -32,17 +32,20 @@ static const unsigned int default_compiler_arguments_length[] = {
   sizeof(default_arguments_unknown) / sizeof(char*) //Unknown compiler
 };
 
-//Return the default arguments for a given compiler
-static char** get_default_arguments(const struct compiler_info* info,
+//Write the default arguments for a given compiler
+static void write_default_arguments(char** output_arguments,
+                                    const struct compiler_info* info,
                                     char* source_path) {
   const unsigned int compiler_index = info->type;
+  const unsigned int compiler_arguments_length = default_compiler_arguments_length[compiler_index];
+
+  //Copy the default arguments
+  memcpy(output_arguments, default_compiler_arguments[compiler_index],
+         compiler_arguments_length * sizeof(char*));
 
   //Set the compiler binary and input path
-  char** default_argument_array = default_compiler_arguments[compiler_index];
-  default_argument_array[0] = info->path;
-  default_argument_array[default_compiler_arguments_length[compiler_index] - 1] = source_path;
-
-  return default_argument_array;
+  output_arguments[0] = info->path;
+  output_arguments[compiler_arguments_length - 1] = source_path;
 }
 
 //Return the number of default arguments for a given compiler
@@ -250,16 +253,14 @@ static void suppress_newlines(char* string) {
 */
 char* run_compiler(const struct compiler_info* compiler_infos, unsigned int compiler_index,
                    const char* user_arguments, const char* source_path, bool* success) {
-  //Fetch compiler information and arguments
+  //Fetch compiler info
   const struct compiler_info* info = &compiler_infos[compiler_index];
-  char* source_path_copy = strdup(source_path);
-  char** default_arguments_array = get_default_arguments(info, source_path_copy);
   const unsigned int default_argument_count = get_default_argument_count(info->type);
-  if (default_arguments_array == NULL) {
-    free(source_path_copy);
-    *success = false;
-    return NULL;
-  }
+  char** default_arguments_array = malloc(default_argument_count * sizeof(char*));
+
+  //Prepare the default arguments
+  char* source_path_copy = strdup(source_path);
+  write_default_arguments(default_arguments_array, info, source_path_copy);
 
   //Parse the user arguments into an array
   unsigned int user_argument_count = 0;
@@ -270,6 +271,7 @@ char* run_compiler(const struct compiler_info* compiler_infos, unsigned int comp
                                                       default_argument_count,
                                                       user_arguments_array,
                                                       user_argument_count);
+  free(default_arguments_array);
 
   //Create a pipe for stdout
   int outPipe[2];
