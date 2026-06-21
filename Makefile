@@ -2,11 +2,11 @@ SHELL := bash -O globstar
 BUILD_DIR ?= build
 
 PREFIX_DIR ?= /usr/local
-BINARY_DIR := $(PREFIX_DIR)/bin
-SHARE_DIR := $(PREFIX_DIR)/share
-DATA_DIR := $(SHARE_DIR)/io.github.stuarthayhurst.Crystal
-ICON_DIR := $(SHARE_DIR)/icons/hicolor/scalable/apps
-APPS_DIR := $(SHARE_DIR)/applications
+BINARY_DIR ?= $(PREFIX_DIR)/bin
+SHARE_DIR ?= $(PREFIX_DIR)/share
+DATA_DIR ?= $(SHARE_DIR)/io.github.stuarthayhurst.Crystal
+ICON_DIR ?= $(SHARE_DIR)/icons/hicolor/scalable/apps
+APPS_DIR ?= $(SHARE_DIR)/applications
 
 OBJECTS_SOURCE := $(shell ls ./src/**/*.c)
 HEADERS_SOURCE := $(shell ls ./src/**/*.h)
