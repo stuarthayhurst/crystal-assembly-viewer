@@ -1,4 +1,4 @@
-SHELL = bash -O globstar
+SHELL := bash -O globstar
 BUILD_DIR ?= build
 
 PREFIX_DIR ?= /usr/local
@@ -8,11 +8,11 @@ DATA_DIR := $(SHARE_DIR)/io.github.stuarthayhurst.Crystal
 ICON_DIR := $(SHARE_DIR)/icons/hicolor/scalable/apps
 APPS_DIR := $(SHARE_DIR)/applications
 
-OBJECTS_SOURCE = $(shell ls ./src/**/*.c)
-HEADERS_SOURCE = $(shell ls ./src/**/*.h)
+OBJECTS_SOURCE := $(shell ls ./src/**/*.c)
+HEADERS_SOURCE := $(shell ls ./src/**/*.h)
 
-OBJECT_DIR = $(BUILD_DIR)/objects
-OBJECTS = $(subst ./src,$(OBJECT_DIR),$(subst .c,.o,$(OBJECTS_SOURCE)))
+OBJECT_DIR := $(BUILD_DIR)/objects
+OBJECTS := $(subst ./src,$(OBJECT_DIR),$(subst .c,.o,$(OBJECTS_SOURCE)))
 
 #Global arguments
 CFLAGS += -Wall -Wextra -Werror -Wpedantic -flto=auto -std=gnu23
