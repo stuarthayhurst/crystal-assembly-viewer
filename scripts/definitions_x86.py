@@ -236,5 +236,5 @@ instructionGroups = [[
   #Deduplicated GAS mnemonics (suffixes are handled by the base XML)
   ['cbt', 'cwt', 'clt', 'cqt', 'movsbw', 'movsxb', 'movsbl', 'movsbq', 'movswl',
   'movsxw', 'movswq', 'movslq', 'movsxl', 'movzbw', 'movzxb', 'movzbl',
-  'movzbq', 'movzwl', 'movzxw', 'movzwq', 'movabs']
+  'movzbq', 'movzwl', 'movzxw', 'movzwq', 'movabs', 'vmov', 'vmovlps']
 ]
