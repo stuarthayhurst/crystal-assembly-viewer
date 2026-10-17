@@ -20,10 +20,10 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 		<style id="comment" name="Comment" map-to="def:comment"/>
 		<style id="operator" name="Operator" map-to="def:operator"/>
 		<style id="string" name="String" map-to="def:string"/>
-		<style id="escaped-character" name="Escaped Character" map-to="def:special-char"/>
+		<style id="escaped-character" name="Escaped character" map-to="def:special-char"/>
 		<style id="char" name="Character" map-to="def:character"/>
-		<style id="decimal" name="Data Type" map-to="def:decimal"/>
-		<style id="type" name="Data Type" map-to="def:type"/>
+		<style id="decimal" name="Data type" map-to="def:decimal"/>
+		<style id="register" name="Register" map-to="def:type"/>
 		<style id="section" name="Section" map-to="def:keyword"/>
 		<style id="directive" name="Directive" map-to="def:keyword"/>
 		<style id="label-def" name="Label definition" map-to="def:type"/>
@@ -305,31 +305,31 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 		    			<keyword>qword</keyword>
 				</context>
 
-				<context id="registers-general" style-ref="type">
+				<context id="registers-general" style-ref="register">
 					<match>\br([0-9]|1[0-5])\b</match>
 				</context>
-				<context id="registers-a" style-ref="type">
+				<context id="registers-a" style-ref="register">
 					<match>\bv([1-5])\b</match>
 				</context>
-				<context id="registers-d" style-ref="type">
+				<context id="registers-d" style-ref="register">
 					<match>\bx([0-9]|1[0-5])\b</match>
 				</context>
-				<context id="registers-f" style-ref="type">
+				<context id="registers-f" style-ref="register">
 					<match>\bf([0-9]|[1-2][0-9]|3[0-1])\b</match>
 				</context>
-				<context id="registers-s" style-ref="type">
+				<context id="registers-s" style-ref="register">
 					<match>\bs([0-9]|[1-2][0-9]|3[0-1])\b</match>
 				</context>
-				<context id="registers-v" style-ref="type">
+				<context id="registers-v" style-ref="register">
 					<match>\bv([1-8])\b</match>
 				</context>
-				<context id="registers-x" style-ref="type">
+				<context id="registers-x" style-ref="register">
 					<match>\bx([0-9]|[1-2][0-9]|30)\b</match>
 				</context>
-				<context id="registers-w" style-ref="type">
+				<context id="registers-w" style-ref="register">
 					<match>\bw([0-9]|[1-2][0-9]|30)\b</match>
 				</context>
-				<context id="registers-named" style-ref="type">
+				<context id="registers-named" style-ref="register">
 					<match>\b(pc|lr|sp|ip|sl|sb)\b</match>
 				</context>
 
