@@ -16,7 +16,7 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 
 	<styles>
 		<style id="preprocessor" name="Preprocessor" map-to="def:preprocessor"/>
-		<style id="keyword" name="Keyword" map-to="def:keyword"/>
+		<style id="instruction" name="Instruction" map-to="def:keyword"/>
 		<style id="comment" name="Comment" map-to="def:comment"/>
 		<style id="operator" name="Operator" map-to="def:operator"/>
 		<style id="string" name="String" map-to="def:string"/>
@@ -333,7 +333,7 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 					<match>\b(pc|lr|sp|ip|sl|sb)\b</match>
 				</context>
 
-				<context id="instructions" style-ref="keyword">
+				<context id="instructions" style-ref="instruction">
 					<!-- Generated section -->
 				</context>
 
