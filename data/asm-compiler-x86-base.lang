@@ -309,8 +309,8 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 				</context>
 
 				<context id="instructions" style-ref="keyword">
-				  <suffix>(l|q|b|w|t|d|o|x|)(\s|\z)</suffix>
-				  <!-- Generated section -->
+					<suffix>(l|q|b|w|t|d|o|x|)(\s|\z)</suffix>
+					<!-- Generated section -->
 				</context>
 
 				<context id="label-def" style-ref="label-def">
