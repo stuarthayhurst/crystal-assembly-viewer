@@ -212,6 +212,8 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 					<keyword>ident</keyword>
 					<keyword>init_array</keyword>
 					<keyword>fini_array</keyword>
+					<keyword>att_syntax</keyword>
+					<keyword>prefalign</keyword>
 				</context>
 				<context id="arm-directives" style-ref="directive">
 					<prefix>\.</prefix>
