@@ -24,10 +24,10 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 		<style id="char" name="Character" map-to="def:character"/>
 		<style id="decimal" name="Data type" map-to="def:decimal"/>
 		<style id="register" name="Register" map-to="def:type"/>
-		<style id="section" name="Section" map-to="def:keyword"/>
-		<style id="directive" name="Directive" map-to="def:keyword"/>
+		<style id="section" name="Section" map-to="def:list-marker"/>
+		<style id="directive" name="Directive" map-to="def:list-marker"/>
 		<style id="label-def" name="Label definition" map-to="def:type"/>
-		<style id="label-ref" name="Label reference" map-to="def:preprocessor"/>
+		<style id="label-ref" name="Label reference" map-to="def:identifier"/>
 	</styles>
 
 	<default-regex-options case-sensitive="false"/>
