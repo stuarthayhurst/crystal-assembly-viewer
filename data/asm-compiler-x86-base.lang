@@ -43,7 +43,7 @@ https://github.com/GabrielFrigo4/Custom-Highlight-Languages/blob/main/gnome-text
 					<start>/\*</start>
 					<end>\*/</end>
 				</context>
-				<context id="nasm-id" style-ref="keyword">
+				<context id="nasm-id" style-ref="label-ref">
 					<start>\[</start>
 					<end>\]</end>
 				</context>
