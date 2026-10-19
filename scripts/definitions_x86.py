@@ -3,9 +3,9 @@
 #Extracted from https://www.felixcloutier.com/x86/
 #Added: TDX, AMD-V, APX, 3DNow!, VAES
 
-instructionGroups = [[
+instructionGroups = [
   #Core instructions
-  'aaa', 'aad', 'aadd', 'aand', 'aam', 'aas', 'adc', 'adcx', 'add', 'addpd', 'addps',
+  ['keyword', 'aaa', 'aad', 'aadd', 'aand', 'aam', 'aas', 'adc', 'adcx', 'add', 'addpd', 'addps',
   'addsd', 'addss', 'addsubpd', 'addsubps', 'adox', 'aesdec', 'aesdec128kl', 'aesdec256kl',
   'aesdeclast', 'aesdecwide128kl', 'aesdecwide256kl', 'aesenc', 'aesenc128kl',
   'aesenc256kl', 'aesenclast', 'aesencwide128kl', 'aesencwide256kl', 'aesimc',
@@ -189,20 +189,20 @@ instructionGroups = [[
   'xsaveopt', 'xsaves', 'xsetbv', 'xsusldtrk', 'xtest'],
 
   #SGX instructions
-  ['encls', 'enclu', 'enclv'],
+  ['keyword', 'encls', 'enclu', 'enclv'],
 
   #SMX instructions
-  ['getsec'],
+  ['keyword', 'getsec'],
 
   #VMX instructions (Intel)
-  ['invept', 'invvpid', 'vmcall', 'vmclear', 'vmfunc', 'vmlaunch', 'vmptrld',
+  ['keyword', 'invept', 'invvpid', 'vmcall', 'vmclear', 'vmfunc', 'vmlaunch', 'vmptrld',
   'vmptrst', 'vmread', 'vmresume', 'vmwrite', 'vmxoff', 'vmxon'],
 
   #TDX instructions (Intel)
-  ['seamops', 'seamret', 'seamcall', 'tdcall'],
+  ['keyword', 'seamops', 'seamret', 'seamcall', 'tdcall'],
 
   #Xeon Phi instructions
-  ['prefetchwt1', 'v4fmaddps', 'v4fmaddss', 'v4fnmaddps', 'v4fnmaddss', 'vexp2pd',
+  ['keyword', 'prefetchwt1', 'v4fmaddps', 'v4fmaddss', 'v4fnmaddps', 'v4fnmaddss', 'vexp2pd',
   'vexp2ps', 'vgatherpf0dpd', 'vgatherpf0dps', 'vgatherpf0qpd', 'vgatherpf0qps',
   'vgatherpf1dpd', 'vgatherpf1dps', 'vgatherpf1qpd', 'vgatherpf1qps', 'vp4dpwssd',
   'vp4dpwssds', 'vrcp28pd', 'vrcp28ps', 'vrcp28sd', 'vrcp28ss', 'vrsqrt28pd',
@@ -211,12 +211,12 @@ instructionGroups = [[
   'vscatterpf1qpd', 'vscatterpf1qps'],
 
   #AMD-V instructions
-  ['invlpga', 'vmrun', 'vmload', 'vmsave', 'stgi', 'clgi', 'vmmcall', 'skinit',
+  ['keyword', 'invlpga', 'vmrun', 'vmload', 'vmsave', 'stgi', 'clgi', 'vmmcall', 'skinit',
   'vmgexit', 'psmash', 'rmpupdate', 'pvalidate', 'rmpadjust', 'rmpquery',
   'rmpread', 'rmpchkd', 'rmpopt'],
 
   #APX instructions
-  ['ccmpb', 'ccmpbe', 'ccmpf', 'ccmpl', 'ccmple', 'ccmpnb', 'ccmpnbe', 'ccmpnl',
+  ['keyword', 'ccmpb', 'ccmpbe', 'ccmpf', 'ccmpl', 'ccmple', 'ccmpnb', 'ccmpnbe', 'ccmpnl',
   'ccmpnle', 'ccmpno', 'ccmpns', 'ccmpnz', 'ccmpo', 'ccmps', 'ccmpt', 'ccmpz',
   'cfcmovb', 'cfcmovbe', 'cfcmovl', 'cfcmovle', 'cfcmovnb', 'cfcmovnbe', 'cfcmovnl',
   'cfcmovnle', 'cfcmovno', 'cfcmovnp', 'cfcmovns', 'cfcmovnz', 'cfcmovo', 'cfcmovp',
@@ -228,13 +228,33 @@ instructionGroups = [[
   'pop2', 'pushp', 'popp', 'jmpabs'],
 
   #3DNow! instructions
-  ['pi2fd', 'pf2id', 'pfcmpge', 'pfcmpgt', 'pfcmpeq', 'pfacc', 'pfadd', 'pfsub',
+  ['keyword', 'pi2fd', 'pf2id', 'pfcmpge', 'pfcmpgt', 'pfcmpeq', 'pfacc', 'pfadd', 'pfsub',
   'pfsubr', 'pfmin', 'pfmax', 'pfmul', 'pfrcp', 'pfrsqrt', 'pfrcpit1', 'pfrcpit2',
   'pfrsqir1', 'pavgusb', 'pmulhrw', 'femms', 'prefetch', 'pf2iw', 'pi2fw', 'pfnacc',
   'pfpnacc', 'pswapd', 'prefetchnta', 'prefetch0', 'prefetch1', 'prefetch2', 'pfrsqrtv', 'pfrcpv'],
 
   #Deduplicated GAS mnemonics (suffixes are handled by the base XML)
-  ['cbt', 'cwt', 'clt', 'cqt', 'movsbw', 'movsxb', 'movsbl', 'movsbq', 'movswl',
+  ['keyword', 'cbt', 'cwt', 'clt', 'cqt', 'movsbw', 'movsxb', 'movsbl', 'movsbq', 'movswl',
   'movsxw', 'movswq', 'movslq', 'movsxl', 'movzbw', 'movzxb', 'movzbl',
   'movzbq', 'movzwl', 'movzxw', 'movzwq', 'movabs', 'vmov', 'vmovlps']
+]
+
+directiveGroups = [
+  #From binutils documentation
+  ['keyword', 'largecomm', 'value', 'insn', 'noopt']
+]
+
+registerGroups = [
+  #Intel segment
+  ['keyword', 'cs', 'ds', 'ss', 'es', 'fs', 'gs'],
+
+  #Intel x87
+  ['keyword', 'st'],
+
+  #General (new), general (old), general (old, byte), control, debug, test, fpu, sse, avx
+  ['match', 'register', '\\b(?i)r([0-9]|[1-2][0-9]|3[0-1])(|d|w|b)(?-i)\\b',
+  '\\b(?i)(r|e|)(ax|bx|cx|dx|si|di|sp|bp|ip)(?-i)\\b', '\\b(?i)(a|b|c|d)(l|h)(?-i)\\b',
+  '\\b(?i)cr([0-9]|1[0-5])(?-i)\\b', '\\b(?i)db[0-7](?-i)\\b', '\\b(?i)tr[0-7](?-i)\\b',
+  '\\b(?i)st[0-7](?-i)\\b', '\\b(?i)mm[0-7](?-i)\\b',
+  '\\b(?i)(x|y|z)mm([0-9]|[1-2][0-9]|3[0-1])(?-i)\\b']
 ]

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language SYSTEM "language.dtd">
-<!--Originally based on the language definition shared on: 
+<!--Originally based on the language definition shared on:
 https://wiki.gnome.org/Projects/GtkSourceView/LanguageDefinitions?action=AttachFile&do=view&target=asm-intel.lang
 -->
 <!-- Developed further from:

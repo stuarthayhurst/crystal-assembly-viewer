@@ -2,7 +2,7 @@
 
 instructionGroups = [
   #Base instructions
-  ['ABS', 'ADC', 'ADCS', 'ADD', 'ADDG', 'ADDPT', 'ADDS', 'ADR', 'ADRP', 'AND',
+  ['keyword', 'ABS', 'ADC', 'ADCS', 'ADD', 'ADDG', 'ADDPT', 'ADDS', 'ADR', 'ADRP', 'AND',
   'ANDS', 'APAS', 'ASR', 'ASRV', 'AT', 'AUTDA', 'AUTDZA', 'AUTDB', 'AUTDZB',
   'AUTIA', 'AUTIA1716', 'AUTIASP', 'AUTIAZ', 'AUTIZA', 'AUTIA171615',
   'AUTIASPPC', 'AUTIASPPCR', 'AUTIB', 'AUTIB1716', 'AUTIBSP', 'AUTIBZ',
@@ -112,7 +112,7 @@ instructionGroups = [
   'WFET', 'WFI', 'WFIT', 'XAFLAG', 'XPACD', 'XPACI', 'XPACLRI', 'YIELD'],
 
   #SIMD instructions
-  ['ADDHN', 'ADDHN2', 'ADDP', 'ADDV', 'AESD', 'AESE', 'AESIMC', 'AESMC', 'BCAX',
+  ['keyword', 'ADDHN', 'ADDHN2', 'ADDP', 'ADDV', 'AESD', 'AESE', 'AESIMC', 'AESMC', 'BCAX',
   'BF1CVTL', 'BF1CVTL2', 'BF2CVTL', 'BF2CVTL2', 'BFCVT', 'BFCVTN', 'BFCVTN2',
   'BFDOT', 'BFMLALB', 'BFMLALT', 'BFMMLA', 'BIF', 'BIT', 'BSL', 'CMEQ', 'CMGE',
   'CMGT', 'CMHI', 'CMHS', 'CMLE', 'CMLT', 'CMTST', 'DUP', 'EOR3', 'EXT',
@@ -167,7 +167,7 @@ instructionGroups = [
   'XAR', 'XTN', 'XTN2', 'ZIP1', 'ZIP2'],
 
   #SVE instructions
-  ['ADCLB', 'ADCLT', 'ADDHNB', 'ADDHNT', 'ADDPL', 'ADDQP', 'ADDQV', 'ADDSUBP',
+  ['keyword', 'ADCLB', 'ADCLT', 'ADDHNB', 'ADDHNT', 'ADDPL', 'ADDQP', 'ADDQV', 'ADDSUBP',
   'ADDVL', 'AESDIMC', 'AESEMC', 'ANDQV', 'ANDV', 'ASRD', 'ASRR', 'BDEP', 'BEXT',
   'BF1CVT', 'BF2CVT', 'BF1CVTLT', 'BF2CVTLT', 'BFADD', 'BFCLAMP', 'BFCVTNT',
   'BFMAX', 'BFMAXNM', 'BFMIN', 'BFMINNM', 'BFMLA', 'BFMLS', 'BFMLSLB',
@@ -225,7 +225,7 @@ instructionGroups = [
   'ZIPQ1', 'ZIPQ2'],
 
   #SME instructions
-  ['ADDHA', 'ADDSPL', 'ADDSVL', 'ADDVA', 'BFMLAL', 'BFMLSL', 'BFMOP4A',
+  ['keyword', 'ADDHA', 'ADDSPL', 'ADDSVL', 'ADDVA', 'BFMLAL', 'BFMLSL', 'BFMOP4A',
   'BFMOP4S', 'BFMOPA', 'BFMOPS', 'BFTMOPA', 'BFVDOT', 'BMOPA', 'BMOPS',
   'FMLALL', 'FMOP4A', 'FMOP4S', 'FMOPA', 'FMOPS', 'FTMOPA', 'FVDOT', 'FVDOTB',
   'FVDOTT', 'MOVA', 'MOVAZ', 'MOVT', 'RDSVL', 'SMLALL', 'SMLSLL', 'SMOP4A',
@@ -235,6 +235,27 @@ instructionGroups = [
   'UQCVT', 'UQRSHR', 'USMLALL', 'USMOP4A', 'USMOP4S', 'USMOPA', 'USMOPS',
   'USTMOPA', 'USVDOT', 'UTMOPA', 'UUNPK', 'UVDOT', 'UZP', 'ZERO', 'ZIP'],
 
- #GAS mnemonics
-  ['ADRL']
+  #GAS mnemonics
+  ['keyword', 'ADRL']
+]
+
+directiveGroups = [
+  #From binutils documentation
+  ['keyword', 'arch', 'arch_extension', 'arm', 'cantunwind', 'cpu', 'dn', 'qn',
+  'eabi_attribute', 'even', 'extend', 'ldouble', 'float16', 'float16_format',
+  'fnend', 'fnstart', 'force_thumb', 'fpu', 'handlerdata', 'inst', 'inst.n',
+  'inst.w', 'ltorg', 'movsp', 'object_arch', 'packed', 'pacspval', 'pad',
+  'personality', 'personalityindex', 'pool', 'req', 'save', 'setfp', 'secrel32',
+  'syntax', 'thumb', 'thumb_func', 'tlsdescseq', 'unreq', 'unwind_raw', 'vsave'],
+
+  #Emitted by various compilers
+  ['keyword', 'aeabi_attribute', 'aeabi_subsection']
+]
+
+registerGroups = [
+  #General, a, d, f, s, v, x, w, named
+  ['match', 'register', '\\br([0-9]|1[0-5])\\b', '\\bv([1-5])\\b',
+  '\\bx([0-9]|1[0-5])\\b', '\\bf([0-9]|[1-2][0-9]|3[0-1])\\b',
+  '\\bs([0-9]|[1-2][0-9]|3[0-1])\\b', '\\bv([1-8])\\b', '\\bx([0-9]|[1-2][0-9]|30)\\b',
+  '\\bw([0-9]|[1-2][0-9]|30)\\b', '\\b(pc|lr|sp|ip|sl|sb)\\b']
 ]

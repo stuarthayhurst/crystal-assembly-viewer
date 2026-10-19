@@ -64,13 +64,13 @@ $(BUILD_DIR)/io.github.stuarthayhurst.Crystal.desktop: data/io.github.stuarthayh
 	@cp -v "$<" "$@"
 	@echo "Path=$(BINARY_DIR)" >> "$@"
 
-$(BUILD_DIR)/asm-compiler-x86.lang: data/asm-compiler-x86-base.lang data/asm-header.xml scripts/definitions_x86.py scripts/generate-lang.py
+$(BUILD_DIR)/asm-compiler-x86.lang: data/asm-compiler-base.lang data/asm-header.xml scripts/definitions_x86.py scripts/generate-lang.py
 	@mkdir -p "$(BUILD_DIR)"
-	./scripts/generate-lang.py "data/asm-compiler-x86-base.lang" "data/asm-header.xml" "x86" "$@"
+	./scripts/generate-lang.py "data/asm-compiler-base.lang" "data/asm-header.xml" "x86" "$@"
 
-$(BUILD_DIR)/asm-compiler-arm.lang: data/asm-compiler-arm-base.lang data/asm-header.xml scripts/definitions_arm.py scripts/generate-lang.py
+$(BUILD_DIR)/asm-compiler-arm.lang: data/asm-compiler-base.lang data/asm-header.xml scripts/definitions_arm.py scripts/generate-lang.py
 	@mkdir -p "$(BUILD_DIR)"
-	./scripts/generate-lang.py "data/asm-compiler-arm-base.lang" "data/asm-header.xml" "arm" "$@"
+	./scripts/generate-lang.py "data/asm-compiler-base.lang" "data/asm-header.xml" "arm" "$@"
 
 $(OBJECT_DIR)/%.o: ./src/%.c $(HEADERS_SOURCE)
 	@mkdir -p "$(OBJECT_DIR)"
