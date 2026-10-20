@@ -74,7 +74,7 @@ $(BUILD_DIR)/asm-compiler-arm.lang: data/asm-compiler-base.lang data/asm-header.
 
 $(OBJECT_DIR)/%.o: ./src/%.c $(HEADERS_SOURCE)
 	@mkdir -p "$(OBJECT_DIR)"
-	ARCH_INDEX=0; \
+	@ARCH_INDEX=0; \
 	if [[ "$$(arch)" == "aarch64" ]] || [[ "$$(arch)" == "arm"* ]]; then \
 	  ARCH_INDEX=1; \
 	fi; \
