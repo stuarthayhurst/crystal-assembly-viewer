@@ -13,7 +13,7 @@ char* get_user_compiler_arguments(GtkWidget* compiler_widget);
 
 void display_compiler_widget_text_content(GtkWidget* compiler_widget, const char* text);
 
-GtkWidget* create_compiler_widget();
+GtkWidget* create_compiler_widget(const char* language_string);
 void set_compiler_widget_compiling(GtkWidget* compiler_widget, bool compiling);
 void set_compiler_widget_dark(GtkWidget* compiler_widget, bool dark);
 void set_compiler_widget_syntax_highlighting(GtkWidget* compiler_widget, bool syntax_highlighting);

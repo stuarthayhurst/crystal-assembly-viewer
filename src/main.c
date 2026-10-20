@@ -58,6 +58,7 @@ static GtkWidget* language_selector;
 
 static GtkCssProvider* frame_css_provider = NULL;
 
+static unsigned int language_index = 0;
 static unsigned int num_panes = 0;
 static bool compiling = false;
 static char* opened_file_path = NULL;
@@ -162,7 +163,7 @@ static GtkWidget* add_compiler_widget() {
   num_panes++;
 
   //Create and return a new widget
-  compiler_widgets[num_panes - 1] = create_compiler_widget();
+  compiler_widgets[num_panes - 1] = create_compiler_widget(language_strings[language_index]);
   update_text_dark_mode(adw_style_manager_get_default());
   return compiler_widgets[num_panes - 1];
 }
@@ -340,7 +341,6 @@ static void recompile_button_clicked_callback() {
 
 static void language_selector_callback() {
   //Find the index of the selected language
-  unsigned int language_index = 0;
   const guint selected_index = gtk_drop_down_get_selected(GTK_DROP_DOWN(language_selector));
   language_index = (selected_index != GTK_INVALID_LIST_POSITION) ? selected_index : 0;
 

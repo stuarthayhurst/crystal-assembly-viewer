@@ -97,7 +97,7 @@ void display_compiler_widget_text_content(GtkWidget* compiler_widget, const char
   gtk_text_buffer_set_text(text_buffer, text, -1);
 }
 
-GtkWidget* create_compiler_widget() {
+GtkWidget* create_compiler_widget(const char* language_string) {
   //Vertical box for the config and output
   GtkWidget* vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
 
@@ -152,7 +152,7 @@ GtkWidget* create_compiler_widget() {
   gtk_widget_set_vexpand(text_view, TRUE);
 
   //Set the syntax highlighting with a custom assembly language, start disabled
-  set_compiler_widget_language(vbox, "assembler-x86");
+  set_compiler_widget_language(vbox, language_string);
   set_compiler_widget_syntax_highlighting(vbox, false);
 
   //Set the text buffer to a placeholder
