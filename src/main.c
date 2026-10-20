@@ -14,6 +14,10 @@
 
 #define MAX_NUM_PANES 4
 
+#ifndef DEFAULT_ARCH_INDEX
+#define DEFAULT_ARCH_INDEX 0
+#endif
+
 static const char file_button_icon[] = "document-open-symbolic";
 static const char recompile_button_icon[] = "view-refresh-symbolic";
 static const char add_pane_button_icon[] = "list-add-symbolic";
@@ -389,6 +393,7 @@ static void setup_content(GtkWidget* window) {
                    G_CALLBACK(language_selector_callback), NULL);
   gtk_box_append(GTK_BOX(left_box), language_selector);
   gtk_widget_set_tooltip_text(language_selector, language_selector_tooltip);
+  gtk_drop_down_set_selected(GTK_DROP_DOWN(language_selector), DEFAULT_ARCH_INDEX);
 
   //Create an hbox for the panel boxes
   GtkWidget* panel_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);
